@@ -18,7 +18,6 @@ define([
 
     initialize: function (options) {
       this.template = _.template(template);
-      Backbone.View.prototype.initialize.call(this, options);
       loadMaps({
         key: 'AIzaSyDJdVhfQhecwp0ngAGzN9zwqak8FaEkSTA',
         geometry: false,
