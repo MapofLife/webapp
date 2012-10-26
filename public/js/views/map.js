@@ -1,5 +1,5 @@
 /*
- * Map view
+ * Map view.
  */
 
 define([
@@ -7,9 +7,8 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'text!/templates/map.html',
-  'libs/google/maps/load',
-], function ($, _, Backbone, template, loadMaps) {
+  'text!/templates/map.html'
+], function ($, _, Backbone, template) {
   return Backbone.View.extend({
 
     el: '#map',
@@ -17,84 +16,78 @@ define([
     map: null,
 
     initialize: function (options) {
-      this.template = _.template(template);
-      loadMaps({
-        key: 'AIzaSyDJdVhfQhecwp0ngAGzN9zwqak8FaEkSTA',
-        geometry: false,
-      }).done(_.bind(function () {
-        this.options = {
-          zoom: 3,
-          center: new google.maps.LatLng(37.3689, -122.0353),
-          maxZoom: 10,
-          minZoom: 2,
-          minLat: -85,
-          maxLat: 85,
-          mapTypeControl: false,
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-          styles: [
-            {
-              featureType: "administrative",
-              stylers: [
-                { visibility: "on" }
-              ]
-            },
-            {
-              featureType: "administrative.locality",
-              stylers: [
-                { visibility: "off" }
-              ]
-            },
-            {
-              featureType: "landscape",
-              stylers: [
-                { visibility: "off" }
-              ]
-            },
-            {
-              featureType: "road",
-              stylers: [
-                { visibility: "off" }
-              ]
-            },
-            {
-              featureType: "poi",
-              stylers: [
-                { visibility: "off" }
-              ]
-            },{
-              featureType: "water",
-              stylers: [
-                { visibility: "on" },
-                { saturation: -65 },
-                { lightness: -15 },
-                { gamma: 0.83 }
-              ]
-            },
-            {
-              featureType: "transit",
-              stylers: [
-                { visibility: "off" }
-              ]
-            },{
-              featureType: "administrative",
-              stylers: [
-                { visibility: "on" }
-              ]
-            },{
-              featureType: "administrative.country",
-              stylers: [
-                { visibility: "on" }
-              ]
-            },{
-              featureType: "administrative.province",
-             stylers: [
-                { visibility: "on" }
-              ]
-            }
+      this.template = _.template(template);   
+      this.options = {
+        zoom: 3,
+        center: new google.maps.LatLng(37.3689, -122.0353),
+        maxZoom: 10,
+        minZoom: 2,
+        minLat: -85,
+        maxLat: 85,
+        mapTypeControl: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [
+        {
+          featureType: "administrative",
+          stylers: [
+          { visibility: "on" }
           ]
-        };
-        this.render();
-      }, this));
+        },
+        {
+          featureType: "administrative.locality",
+          stylers: [
+          { visibility: "off" }
+          ]
+        },
+        {
+          featureType: "landscape",
+          stylers: [
+          { visibility: "off" }
+          ]
+        },
+        {
+          featureType: "road",
+          stylers: [
+          { visibility: "off" }
+          ]
+        },
+        {
+          featureType: "poi",
+          stylers: [
+          { visibility: "off" }
+          ]
+        },{
+          featureType: "water",
+          stylers: [
+          { visibility: "on" },
+          { saturation: -65 },
+          { lightness: -15 },
+          { gamma: 0.83 }
+          ]
+        },
+        {
+          featureType: "transit",
+          stylers: [
+          { visibility: "off" }
+          ]
+        },{
+          featureType: "administrative",
+          stylers: [
+          { visibility: "on" }
+          ]
+        },{
+          featureType: "administrative.country",
+          stylers: [
+          { visibility: "on" }
+          ]
+        },{
+          featureType: "administrative.province",
+          stylers: [
+          { visibility: "on" }
+          ]
+        }
+        ]
+      }
     },
 
     render: function () {

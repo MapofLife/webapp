@@ -7,7 +7,7 @@ define([
   'Underscore',
   'Backbone',
   'router'
-], function ($, _, Backbone, Router, mps) {
+], function ($, _, Backbone, Router, mps, cartodb) {
   var init = function () {
     Router.init();
   }
