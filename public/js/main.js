@@ -9,7 +9,6 @@ require.config({
     Backbone: 'libs/backbone/backbone',
     mps: 'libs/minpubsub/minpubsub',
     uikit: 'libs/uikit/uikit'
-    //cartodb: 'libs/cartodb/cartodb'
   },
   // load in the correct order (still asynch)
   shim: {
