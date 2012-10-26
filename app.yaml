@@ -42,4 +42,4 @@ handlers:
   static_dir: public/templates
 
 - url: /.*
-  script: app.application
+  script: app.boom
