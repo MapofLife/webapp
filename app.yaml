@@ -1,0 +1,45 @@
+application: map-of-life
+version: canary
+runtime: python27
+threadsafe: true
+api_version: 1
+
+builtins:
+- remote_api: on
+
+inbound_services:
+- warmup
+- channel_presence
+
+libraries:
+- name: jinja2
+  version: "latest"
+
+handlers:
+
+- url: /rpc
+  script: mol.rpc.handler
+
+- url: /bus/.*
+  script: mol.bus.handler
+
+- url: /_ah/channel/.*
+  script: mol.bus.handler
+
+- url: /css
+  static_dir: public/css
+
+- url: /fonts
+  static_dir: public/fonts
+
+- url: /img
+  static_dir: public/img
+
+- url: /js
+  static_dir: public/js
+
+- url: /templates
+  static_dir: public/templates
+
+- url: /.*
+  script: app.application

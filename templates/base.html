@@ -1,0 +1,13 @@
+{% extends "index.html" %}
+
+{% block base %}
+  <div class="wrap">
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  <!-- bootstrap all JS here -->
+  <script type="text/javascript" charset="utf-8" data-main="/js/main"
+      src="/js/libs/require/require.js"></script>
+  <script src="/_ah/channel/jsapi"></script>
+{% endblock %}
