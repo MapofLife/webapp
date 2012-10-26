@@ -5,6 +5,16 @@ import sys
 def fix_path():  
   sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
   sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/engineauth'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/engineauth/lib/'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/engineauth/lib/apiclient'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/engineauth/lib/httplib2'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/engineauth/lib/oauth2'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/engineauth/lib/oauth2client'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/engineauth/lib/uritemplate'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/certifi'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/chardet'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/iso8601'))
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/requests'))
   sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/google'))
   sys.path.append(os.path.join(os.path.dirname(__file__), 'mol'))
 
@@ -22,11 +32,11 @@ engineauth['provider.auth'] = {
 }
 
 if ON_DEV:
-  GITHUB_APP_KEY = '75b4a738835e67f2d275'
-  GITHUB_APP_SECRET = 'a6c2d8fb0abf02c852da920883743650a4f2a74e'
+  GITHUB_APP_KEY = 'e2b1b7d9d7b79af623bf'
+  GITHUB_APP_SECRET = '652512f70bc177048c0f55b10e300fc97a8a2011'
 else:
-  GITHUB_APP_KEY = 'b211a738c977b79b6387'
-  GITHUB_APP_SECRET = '172b000e86a545f8706760377c21f9473bac675a'
+  GITHUB_APP_KEY = 'TODO'
+  GITHUB_APP_SECRET = 'TODO'
 
 engineauth['provider.github'] = {
   'client_id': GITHUB_APP_KEY,
