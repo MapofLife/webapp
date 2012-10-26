@@ -1,41 +1,51 @@
-from google.appengine.ext.webapp import template
-from google.appengine.ext.webapp.util import run_wsgi_app
-
-import logging
 import os
-import random
 import webapp2
 
-if 'SERVER_SOFTWARE' in os.environ:
-    PROD = not os.environ['SERVER_SOFTWARE'].startswith('Development')
-else:
-    PROD = True
+from google.appengine.ext.webapp.util import run_wsgi_app
+from webapp2_extras.routes import RedirectRoute
 
-class BaseHandler(webapp2.RequestHandler):
-    def render_template(self, f, template_args):
-        path = os.path.join(os.path.dirname(__file__), "templates", f)
-        self.response.out.write(template.render(path, template_args))
+routes = [
 
-    def push_html(self, f):
-        path = os.path.join(os.path.dirname(__file__), "html", f)
-        self.response.out.write(open(path, 'r').read())
+    webapp2.Route(r'/',
+        handler='handlers.PageHandler:home',
+        name='app-splash'),
 
-class MapPage(BaseHandler):
-    def get(self):
-        self.render_template('home.html',
-                             {'title': 'MOL', 'prod': PROD, 'r': random.random()})
+    RedirectRoute(r'/signup',
+        handler='handlers.PageHandler:signup',
+        name='app-signup', strict_slash=True),
 
-class TestPage(BaseHandler):
-    def get(self):
-        self.render_template('design.html', {})
+    RedirectRoute(r'/login',
+        handler='handlers.PageHandler:login',
+        name='app-login', strict_slash=True),
 
-application = webapp2.WSGIApplication(
-         [('/', MapPage), ('/.*',MapPage),
-         ('/design', TestPage)],
-         debug=True)
+    RedirectRoute(r'/logout',
+        handler='handlers.PageHandler:logout',
+        name='app-logout', strict_slash=True),
 
+    RedirectRoute(r'/settings/user',
+        handler='handlers.PageHandler:settings',
+        name='user-settings', strict_slash=True),
+
+    RedirectRoute(r'/<username:[\w-]+>',
+        handler='handlers.PageHandler:user',
+        name='user-dashboard', strict_slash=True),
+]
+
+DEBUG = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
+
+config = { 
+    'webapp2_extras.sessions': {
+        'secret_key': 'wIDjEesObzp5nonpRHDzSp40aba7STuqC6ZRY'
+    },
+    'webapp2_extras.auth': {
+        'user_attributes': ['username', 'email', 'displayName']
+    }
+}
+
+boom = webapp2.WSGIApplication(routes, debug=DEBUG, config=config)
+         
 def main():
-    run_wsgi_app(application)
-
+    run_wsgi_app(boom)
+    
 if __name__ == "__main__":
     main()
