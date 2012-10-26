@@ -1,0 +1,103 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "partials/messages.html" %}
+  <div class="container">
+    <div class="login">
+      <div class="login-right">
+        <span class="login-heading">Log in to with a network.
+          <span class="login-heading-subtitle">It's fast and easy.</span>
+        </span>
+        <a href="/auth/facebook" class="button 
+            connect-service-button connect-facebook-button">
+          <span>Connect with Facebook</span>
+          <i class="icon-right"></i>
+        </a>
+        <a href="/auth/github" class="button 
+            connect-service-button connect-github-button">
+          <span>Connect with GitHub</span>
+          <i class="icon-right"></i>
+        </a>
+      </div>
+      <div class="login-center">
+        <span class="login-heading">New to Map of Life? Sign up.
+          <span class="login-heading-subtitle">A MOL account is required to annotate maps.</span>
+        </span>
+        <form method="POST" action="/auth/password"
+            enctype="multipart/form-data">
+          <input type="hidden" name="action" value="signup" />
+          <table>
+            <tbody>
+              <tr>
+                <td class="section">
+                  <input type="text" autocomplete="off" class="undered" 
+                      name="username" placeholder="Username" />
+                </td>
+              </tr>
+              <tr>
+                <td class="section">
+                  <input type="text" autocomplete="off" class="undered" 
+                      name="email" placeholder="Email Address" />
+                </td>
+              </tr>
+              <tr>
+                <td class="section">
+                  <input type="password" autocomplete="off" class="undered" 
+                      name="password" placeholder="Password" />
+                </td>
+              </tr>
+              <tr>
+                <td class="section">
+                  <input type="password" autocomplete="off" class="undered" 
+                      name="password_confirm" placeholder="Confirm Password" />
+                </td>
+              </tr>
+              <tr>
+                <td align="right">
+                  <button type="submit" class="connect-service-button">
+                    <span>Create my account</span>
+                    <i class="icon-right"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div class="login-left">
+        <span class="login-heading orange">Log in.
+          <span class="login-heading-subtitle">We know you want to.</span>
+        </span>
+        <form method="POST" action="/auth/password"
+            enctype="multipart/form-data">
+          <input type="hidden" name="action" value="login" />
+          <table>
+            <tbody>
+              <tr>
+                <td class="section">
+                  <input type="text" autocomplete="off" class="undered" 
+                      name="username" placeholder="Username" />
+                </td>
+              </tr>
+              <tr>
+                <td class="section">
+                  <input type="password" autocomplete="off" class="undered" 
+                      name="password" placeholder="Password" />
+                </td>
+              </tr>
+              <tr>
+                <td align="right">
+                  <button type="submit" class="connect-service-button">
+                    <span>Log me in</span>
+                    <i class="icon-right"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

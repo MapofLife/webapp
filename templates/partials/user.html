@@ -1,0 +1,26 @@
+{% if not user %}
+  <a href="/login">
+    <span class="login-link">Log in / Sign up</span>
+  </a>
+{% elif user %}
+  <div class="userbox">
+    <div class="avatar">
+      <a href="/{{ user.username }}">
+        <span class="avatar-icon"
+            style="background-image:url({{ profiles[0].user_info['info']['image']['url'] }});"></span>
+      </a>
+    </div>
+    <ul class="user-links">
+      <li>
+        <a href="/settings">
+          <span class="settings-icon"></span>
+        </a>
+      </li>
+      <li>
+        <a href="/logout">
+          <span class="logout-icon"></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+{% endif %}

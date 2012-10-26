@@ -8,8 +8,10 @@ define([
   'Underscore',
   'Backbone',
   'bus',
+  'views/login',
+  'views/header',
   'views/map'
-], function ($, _, Backbone, Bus, Map) {
+], function ($, _, Backbone, Bus, Login, Header, Map) {
   var AppRouter = Backbone.Router.extend({
     
     initialize: function () {
@@ -23,8 +25,7 @@ define([
       // this.route(':username/:name', 'idea', _.bind(this.idea, this));
       // this.route(':username', 'profile', _.bind(this.profile, this));
       // this.route(/^settings\/profile$/, 'settings', _.bind(this.settings, this));
-      // this.route('login', 'login', _.bind(this.login, this));
-      // this.route('signup', 'signup', _.bind(this.signup, this));
+      this.route('login', 'login', _.bind(this.login, this));
       this.route('', 'home', _.bind(this.home, this));
     },
 
@@ -35,8 +36,8 @@ define([
 
     home: function () {
       console.log('Route:', 'home')
+      new Header().render();
       new Map();
-
       // Bus.init();
     },
 
@@ -46,11 +47,10 @@ define([
     //   new SignUp().render();
     // },
 
-    // login: function () {
-    //   console.log('Route:', 'login')
-    //   new Header().render();
-    //   new Login().render();
-    // },
+    login: function () {
+      console.log('Route:', 'login')
+      new Login().render();
+    },
 
     // settings: function () {
     //   console.log('Route:', 'settings')

@@ -1,0 +1,14 @@
+{% if messages %}
+  <div class="block-messages">
+    <!-- <a href="#" class="close">&times;</a> -->
+    <ul>
+      {% for message in messages %}
+        <li class="block-{{ message['level'] }}">
+          <span class="block-{{ message['level'] }}-txt">
+            {{ message['message']|safe }}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
