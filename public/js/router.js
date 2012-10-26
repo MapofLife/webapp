@@ -10,8 +10,9 @@ define([
   'bus',
   'views/login',
   'views/header',
-  'views/map'
-], function ($, _, Backbone, Bus, Login, Header, Map) {
+  'views/map',
+  'mapping'
+], function ($, _, Backbone, Bus, Login, Header, Map, mapping) {
   var AppRouter = Backbone.Router.extend({
     
     initialize: function () {
@@ -36,8 +37,10 @@ define([
 
     home: function () {
       console.log('Route:', 'home')
-      new Header().render();
-      new Map();
+      mapping.init(function() {
+        new Header().render();
+        new Map().render();  
+      });
       // Bus.init();
     },
 
