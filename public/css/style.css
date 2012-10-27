@@ -160,6 +160,8 @@ input[type="submit"]:focus {
   border: 1px solid #98c1e6;
 }
 
+/*HEADER*/
+
 #header {
   height: 40px;
   padding: 10px 20px 0 20px;
@@ -186,6 +188,10 @@ input[type="submit"]:focus {
 #login-link {
   float: right;
 }
+
+/*LOGIN*/
+
+
 
 /* END MOL */
 
