@@ -11,8 +11,9 @@ define([
   'views/login',
   'views/header',
   'views/map',
+  'views/search',
   'mapping'
-], function ($, _, Backbone, Bus, Login, Header, Map, mapping) {
+], function ($, _, Backbone, Bus, Login, Header, Map, Search, mapping) {
   var AppRouter = Backbone.Router.extend({
     
     initialize: function () {
@@ -38,8 +39,15 @@ define([
     home: function () {
       console.log('Route:', 'home')
       mapping.init(function() {
-        new Header().render();
-        new Map().render();  
+        var header = new Header().render();
+        var map = new Map().render();  
+        var search = new Search({map: map.map}).render();        
+        CartoDB.sql = {
+          autocomplete: "SELECT n,v FROM ac WHERE n~*'\\m{0}' OR v~*'\\m{0}'"
+        };
+        CartoDB.url = {
+          sql: 'http://d3dvrpov25vfw0.cloudfront.net/api/v2/sql?callback=?&q={0}'
+        };
       });
       // Bus.init();
     },
