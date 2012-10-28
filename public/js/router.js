@@ -43,7 +43,44 @@ define([
         var map = new Map().render();  
         var search = new Search({map: map.map}).render();        
         CartoDB.sql = {
-          autocomplete: "SELECT n,v FROM ac WHERE n~*'\\m{0}' OR v~*'\\m{0}'"
+          autocomplete: "SELECT n,v FROM ac WHERE n~*'\\m{0}' OR v~*'\\m{0}'",
+          byName: 'SELECT DISTINCT l.scientificname as name,'+
+                    't.type as type,'+
+                    't.sort_order as type_sort_order, ' +
+                    't.title as type_title, '+
+                    't.opacity as opacity, ' +
+                    'CONCAT(l.provider,\'\') as source, '+
+                    'CONCAT(p.title,\'\') as source_title,'+
+                    's.source_type as source_type, ' +
+                    's.title as source_type_title, ' +   
+                    'l.feature_count as feature_count, '+
+                    'CONCAT(n.v,\'\') as names, ' +
+                    'CONCAT(\'{' +
+                        '"sw":{' +
+                            '"lng":\',ST_XMin(l.extent),\', '+
+                            '"lat":\',ST_YMin(l.extent),\' '+
+                        '}, '+
+                        '"ne":{' +
+                        '"lng":\',ST_XMax(l.extent),\', ' +
+                        '"lat":\',ST_YMax(l.extent),\' ' +
+                        '}}\') as extent, ' +
+                    'l.dataset_id as dataset_id, ' +
+                    'd.dataset_title as dataset_title, ' + 
+                    'd.style_table as style_table ' +
+                'FROM layer_metadata l ' +
+                'LEFT JOIN data_registry d ON ' +
+                    'l.dataset_id = d.dataset_id ' +
+                'LEFT JOIN types t ON ' +
+                    'l.type = t.type ' +
+                'LEFT JOIN providers p ON ' +
+                    'l.provider = p.provider ' +
+                'LEFT JOIN source_types s ON ' +
+                    'p.source_type = s.source_type ' +
+                'LEFT JOIN ac n ON ' +
+                    'l.scientificname = n.n ' +
+                'WHERE ' +
+                     "n.n~*'\\m{0}' OR n.v~*'\\m{0}' " +
+                'ORDER BY name, type_sort_order'
         };
         CartoDB.url = {
           sql: 'http://d3dvrpov25vfw0.cloudfront.net/api/v2/sql?callback=?&q={0}'

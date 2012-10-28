@@ -24,6 +24,7 @@ define([
       this.template = _.template(template);  
       this.map = params.map;
       this.on('rendered', this.setup, this);
+      this.searching = {};
     },
 
     /**
@@ -46,7 +47,24 @@ define([
     setup: function () {
       this.$('input').autocomplete({
         minLength: 3,
-        source: _.bind(this.queryAutocomplete, this)
+        source: _.bind(this.queryAutocomplete, this),
+        select: _.bind(function(event, ui) {
+          this.searching[ui.item.value] = false;
+          this.names = [ui.item.value];
+          this.search(ui.item.value);
+        }, this),
+        close: _.bind(function(event,ui) {
+          // NOP
+        }, this),
+        search: _.bind(function(event, ui) {
+          this.searching[this.$('input').val()] = true;
+          this.names = [];
+          mps.publish('show-loading-indicator', {source : "autocomplete"});
+        }, this),
+        open: _.bind(function(event, ui) {
+          this.searching[$(this).val()] = false;
+          mps.publish('hide-loading-indicator', {source : "autocomplete"});
+        }, this)
       });
       return this;
     },
@@ -62,7 +80,7 @@ define([
       var term = $.trim(request.term).replace(/ /g, ' ');
       var sql = CartoDB.sql.autocomplete.format(term);
       var url = CartoDB.url.sql.format(sql);
-      $.getJSON(url, _.bind(this.handleResponse(response), this));
+      $.getJSON(url, _.bind(this.handleAutocompleteResponse(response), this));
     },
 
     /**
@@ -72,7 +90,7 @@ define([
      * 
      * @param response The autocomplete response callback.
      */
-    handleResponse: function(response) {
+    handleAutocompleteResponse: function(response) {
       return function(json) {
         var names = _.map(json.rows, _.bind(this.processRow, this))
         var sciNames = _.reduce(names, this.reduceNames(0), []);
@@ -116,6 +134,45 @@ define([
         engName = ', {0}'.format(engName.replace(/'S/g, "'s"));        
       }
       return [sciName, {label: label.format(sciName, engName), value: sciName}];
+    },
+
+    /**
+     * Search CartoDB on the supplied term.
+     */
+    search: function(term) {
+      var sql = null;
+      var url = null;
+      var source = null;
+      this.$('input').autocomplete('disable');
+      term = $.trim(term);
+      if (term.length === 0) {
+        mps.publish('clear-results', {});
+        this.$('input').autocomplete('enable');
+      } else if (term.length < 3) {
+        alert('Search term must have at least 3 characters.');
+        this.$('input').autocomplete('enable');
+      } else {
+        this.$('input').val(term);
+        source = {source : "search-{0}".format(term)};
+        mps.publish('show-loading-indicator', source);                  
+        term = term.replace(/ /g, ' ');
+        sql = CartoDB.sql.byName.format(term);
+        url = CartoDB.url.sql.format(sql);
+        $.getJSON(url, _.bind(this.handleSearchResponse(term, source), this));
+      }
+    },
+
+    /**
+     * Return a function for handling a CartoDB search response.
+     */
+    handleSearchResponse: function(term, source) {
+      return function(response) {
+        var results = {term:term, response:response};
+        mps.publish('hide-loading-indicator', source);
+        mps.publish('search-results', results);
+        this.$('input').autocomplete('enable');
+        console.log(results);
+      };
     }
   });
 });
