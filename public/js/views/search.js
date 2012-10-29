@@ -45,7 +45,11 @@ define([
      * Setup autocomplete on the view input.
      */
     setup: function () {
-      this.$('input').autocomplete({
+      var input = this.$('input');
+      input.bind('keyup.return', _.bind(function() {
+        this.search(input.val());
+      }, this));
+      input.autocomplete({
         minLength: 3,
         source: _.bind(this.queryAutocomplete, this),
         select: _.bind(function(event, ui) {
@@ -57,12 +61,12 @@ define([
           // NOP
         }, this),
         search: _.bind(function(event, ui) {
-          this.searching[this.$('input').val()] = true;
+          this.searching[input.val()] = true;
           this.names = [];
           mps.publish('show-loading-indicator', {source : "autocomplete"});
         }, this),
         open: _.bind(function(event, ui) {
-          this.searching[$(this).val()] = false;
+          this.searching[input.val()] = false;
           mps.publish('hide-loading-indicator', {source : "autocomplete"});
         }, this)
       });
