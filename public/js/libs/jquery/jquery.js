@@ -18,7 +18,11 @@ define([
   require(['libs/jquery/jquery.autogrow',
            'libs/jquery/jquery.easing.min',
            'libs/jquery/jquery.color.min',
-           'libs/jquery/jquery.hotkeys'
+           'libs/jquery/jquery.hotkeys',
+           'libs/jquery/jquery.ui.core',
+           'libs/jquery/jquery.ui.widget',
+           'libs/jquery/jquery.ui.autocomplete',
+           'libs/jquery/jquery.ui.position'
            ]);
 
   return jQuery;
