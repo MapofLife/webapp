@@ -63,12 +63,11 @@ class PageHandler(Jinja2Handler):
         })
 
     def login(self):
-        # session = self.getSession()
         user = self.getUser()
         if user:
             return self.redirect('/')
         self.render_template('login.html', {
-            'title': 'Log in - Hylo',
+            'title': 'Log in - MOL',
             'header': 'default'
         })
 

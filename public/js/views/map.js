@@ -16,7 +16,7 @@ define([
     map: null,
 
     initialize: function (options) {
-      this.template = _.template(template);   
+      this.template = _.template(template);
       this.options = {
         zoom: 3,
         center: new google.maps.LatLng(37.3689, -122.0353),
@@ -27,67 +27,67 @@ define([
         mapTypeControl: false,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         styles: [
-        {
-          featureType: "administrative",
-          stylers: [
-          { visibility: "on" }
-          ]
-        },
-        {
-          featureType: "administrative.locality",
-          stylers: [
-          { visibility: "off" }
-          ]
-        },
-        {
-          featureType: "landscape",
-          stylers: [
-          { visibility: "off" }
-          ]
-        },
-        {
-          featureType: "road",
-          stylers: [
-          { visibility: "off" }
-          ]
-        },
-        {
-          featureType: "poi",
-          stylers: [
-          { visibility: "off" }
-          ]
-        },{
-          featureType: "water",
-          stylers: [
-          { visibility: "on" },
-          { saturation: -65 },
-          { lightness: -15 },
-          { gamma: 0.83 }
-          ]
-        },
-        {
-          featureType: "transit",
-          stylers: [
-          { visibility: "off" }
-          ]
-        },{
-          featureType: "administrative",
-          stylers: [
-          { visibility: "on" }
-          ]
-        },{
-          featureType: "administrative.country",
-          stylers: [
-          { visibility: "on" }
-          ]
-        },{
-          featureType: "administrative.province",
-          stylers: [
-          { visibility: "on" }
-          ]
-        }
+          {
+            featureType: "administrative",
+            stylers: [
+            { visibility: "on" }
+            ]
+          },
+          {
+            featureType: "administrative.locality",
+            stylers: [
+            { visibility: "off" }
+            ]
+          },
+          {
+            featureType: "landscape",
+            stylers: [
+            { visibility: "off" }
+            ]
+          },
+          {
+            featureType: "road",
+            stylers: [
+            { visibility: "off" }
+            ]
+          },
+          {
+            featureType: "poi",
+            stylers: [
+            { visibility: "off" }
+            ]
+          },{
+            featureType: "water",
+            stylers: [
+            { visibility: "on" },
+            { saturation: -65 },
+            { lightness: -15 },
+            { gamma: 0.83 }
+            ]
+          },
+          {
+            featureType: "transit",
+            stylers: [
+            { visibility: "off" }
+            ]
+          },{
+            featureType: "administrative",
+            stylers: [
+            { visibility: "on" }
+            ]
+          },{
+            featureType: "administrative.country",
+            stylers: [
+            { visibility: "on" }
+            ]
+          },{
+            featureType: "administrative.province",
+            stylers: [
+            { visibility: "on" }
+            ]
+          }
         ]
-      }
+      };
     },
 
     render: function () {

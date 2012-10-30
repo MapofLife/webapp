@@ -2,102 +2,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-  {% include "partials/messages.html" %}
+  {% include "partials/header.html" %}
   <div class="container">
-    <div class="login">
-      <div class="login-right">
-        <span class="login-heading">Log in to with a network.
-          <span class="login-heading-subtitle">It's fast and easy.</span>
-        </span>
-        <a href="/auth/facebook" class="button 
-            connect-service-button connect-facebook-button">
-          <span>Connect with Facebook</span>
-          <i class="icon-right"></i>
-        </a>
-        <a href="/auth/github" class="button 
-            connect-service-button connect-github-button">
-          <span>Connect with GitHub</span>
-          <i class="icon-right"></i>
-        </a>
-      </div>
-      <div class="login-center">
-        <span class="login-heading">New to Map of Life? Sign up.
-          <span class="login-heading-subtitle">A MOL account is required to annotate maps.</span>
-        </span>
-        <form method="POST" action="/auth/password"
-            enctype="multipart/form-data">
-          <input type="hidden" name="action" value="signup" />
-          <table>
-            <tbody>
-              <tr>
-                <td class="section">
-                  <input type="text" autocomplete="off" class="undered" 
-                      name="username" placeholder="Username" />
-                </td>
-              </tr>
-              <tr>
-                <td class="section">
-                  <input type="text" autocomplete="off" class="undered" 
-                      name="email" placeholder="Email Address" />
-                </td>
-              </tr>
-              <tr>
-                <td class="section">
-                  <input type="password" autocomplete="off" class="undered" 
-                      name="password" placeholder="Password" />
-                </td>
-              </tr>
-              <tr>
-                <td class="section">
-                  <input type="password" autocomplete="off" class="undered" 
-                      name="password_confirm" placeholder="Confirm Password" />
-                </td>
-              </tr>
-              <tr>
-                <td align="right">
-                  <button type="submit" class="connect-service-button">
-                    <span>Create my account</span>
-                    <i class="icon-right"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
-      </div>
-      <div class="login-left">
-        <span class="login-heading orange">Log in.
-          <span class="login-heading-subtitle">We know you want to.</span>
-        </span>
-        <form method="POST" action="/auth/password"
-            enctype="multipart/form-data">
-          <input type="hidden" name="action" value="login" />
-          <table>
-            <tbody>
-              <tr>
-                <td class="section">
-                  <input type="text" autocomplete="off" class="undered" 
-                      name="username" placeholder="Username" />
-                </td>
-              </tr>
-              <tr>
-                <td class="section">
-                  <input type="password" autocomplete="off" class="undered" 
-                      name="password" placeholder="Password" />
-                </td>
-              </tr>
-              <tr>
-                <td align="right">
-                  <button type="submit" class="connect-service-button">
-                    <span>Log me in</span>
-                    <i class="icon-right"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
-      </div>
+    <div class="dialog" id="dialog-login">
+      <form action="/login" method="POST">
+        <div class="dialog-header">Log in or create an account</div>
+        <div class="dialog-content clearfix">
+          <div class="separator clearfix buttons">
+            <a href="/connect/facebook?callback=%2Fregister?provider=facebook" class="facebook social-button">
+              <span class="fb-icon"></span>
+              <span class="fb-name">Connect with Facebook</span>
+            </a>
+            <span class="login-or"></span>
+            <a href="/connect/twitter?callback=%2Fregister?provider=twitter" class="twitter social-button">
+              <span class="twitter-icon"></span>
+              <span class="twitter-name">Connect with Twitter</span>
+            </a>
+          </div>      
+          <div class="col-50 left">
+            <div class="separator clearfix noline border-right">
+              <input type="text" name="email" class="email" placeholder="Email" />
+              <div class="input-icon icon-right">
+                <input type="password" name="password" class="password" placeholder="Password" />
+                <span class="icon attention" title=""></span>
+              </div>
+              <div class="login-submit">
+                <input type="submit" class="button blue left" value="Log in" />
+                <a class="right show-forgotpw">Forgot Password?</a>
+              </div>
+              <div class="forgotpw-submit">
+                <input type="submit" class="button blue left" value="Reset password" name="forgot_password" />
+                <a class="right cancel-forgotpw">Cancel</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-50 left">
+            <div class="separator clearfix noline mbottom border-left">
+              <h3>Sign Up</h3>
+              <p>Create a Wunderkit account and start working on amazing things with the help of your friends, family and colleagues.</p>
+              <a class="button blue left" href="/register">Sign up</a>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 {% endblock %}
