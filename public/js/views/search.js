@@ -6,9 +6,10 @@ define([
   'Underscore',
   'Backbone',
   'models/search',
+  'views/result',
   'text!/templates/search.html',
   'mps'
-], function ($, _, Backbone, Search, template, mps) {
+], function ($, _, Backbone, Search, Result, template, mps) {
   return Backbone.View.extend({
 
     tagName: 'div',
@@ -20,7 +21,7 @@ define([
      *
      * @params Object containing the Google Maps object.
      */
-    initialize: function(params) {
+    initialize: function (params) {
       this.template = _.template(template);  
       this.map = params.map;
       this.on('rendered', this.setup, this);
@@ -32,13 +33,14 @@ define([
      *
      */
     render: function () {
-      this.$el.html(this.template()).appendTo(this.parent);
+      this.$el.html(this.template());
       this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(this.el);
       this.trigger('rendered');
       return this;
     },
 
     events: {
+      //
     },
 
     /**
@@ -176,6 +178,7 @@ define([
         mps.publish('search-results', results);
         this.$('input').autocomplete('enable');
         console.log(results);
+        // new Result({ data: results });
       };
     }
   });

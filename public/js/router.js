@@ -40,8 +40,8 @@ define([
       console.log('Route:', 'home')
       mapping.init(function() {
         var header = new Header().render();
-        var map = new Map().render();  
-        var search = new Search({map: map.map}).render();        
+        var map = new Map().render();
+        var search = new Search({map: map.map}).render();
         CartoDB.sql = {
           autocomplete: "SELECT n,v FROM ac WHERE n~*'\\m{0}' OR v~*'\\m{0}'",
           byName: 'SELECT DISTINCT l.scientificname as name,'+
