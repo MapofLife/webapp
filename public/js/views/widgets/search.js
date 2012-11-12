@@ -46,7 +46,8 @@ define([
     },
 
     events: {
-      //
+      'click .execute': 'execute',
+      'click .toggle': 'toggle'
     },
 
     /**
@@ -149,6 +150,15 @@ define([
     },
 
     /**
+     * Perform a search when Go is clicked.
+     */
+    execute: function (e) {
+      var input = this.$('input');
+      this.search(input.val());
+      return this;
+    },
+
+    /**
      * Search CartoDB on the supplied term.
      */
     search: function (term) {
@@ -186,6 +196,14 @@ define([
         console.log(results);
         // new Result({ data: results });
       };
-    }
+    },
+
+    toggle: function (e) {
+      if (this.$el.hasClass('off'))
+        this.$el.removeClass('off');
+      else
+        this.$el.addClass('off');
+    },
+
   });
 });

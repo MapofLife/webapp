@@ -26,7 +26,8 @@ define([
         minZoom: 2,
         minLat: -85,
         maxLat: 85,
-        mapTypeControl: false,
+        disableDefaultUI: true,
+        zoomControl: true,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         styles: [
           {
