@@ -1,5 +1,5 @@
 /*
- * Map view.
+ * Map view
  */
 
 define([
@@ -7,13 +7,15 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'text!/templates/map.html'
-], function ($, _, Backbone, template) {
+  'text!/templates/map.html',
+  'views/control_display'
+], function ($, _, Backbone, template, ControlDisplay) {
   return Backbone.View.extend({
 
     el: '#map',
     options: null,
     map: null,
+    displays: [],
 
     initialize: function (options) {
       this.template = _.template(template);
@@ -95,8 +97,25 @@ define([
         this.$el.html(this.template());
         if (!window.google || !window.google.maps) return this;
         this.map = new google.maps.Map($('#canvas', this.el).get(0), this.options);
+        this.addDisplays();
       }      
       return this;
+    },
+
+    addDisplays: function () {
+      // create the top-left control display
+      this.displays.push(new ControlDisplay({
+        widgets: [
+          { name: 'Search', position: { y: 'top' }}
+        ],
+        position: { x: 'left', y: 'top' }
+      }, this).render());
+    },
+
+    getDisplay: function(position) {
+      return _.find(this.displays, function (display) {
+        return _.isEqual(position, display.model.get('position'));
+      });
     },
 
     resize: function() {

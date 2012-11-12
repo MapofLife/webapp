@@ -1,14 +1,14 @@
 /*
  * Bootstrap
  */
+
 require.config({
   paths: {
     // libraries
     jQuery: 'libs/jquery/jquery',
     Underscore: 'libs/underscore/underscore',
     Backbone: 'libs/backbone/backbone',
-    mps: 'libs/minpubsub/minpubsub',
-    uikit: 'libs/uikit/uikit'
+    mps: 'libs/minpubsub/minpubsub'
   },
   // load in the correct order (still asynch)
   shim: {
@@ -21,10 +21,6 @@ require.config({
     Backbone: {
       deps: ['jQuery', 'Underscore'],
       exports: 'Backbone'
-    },
-    uikit: {
-      deps: ['jQuery'],
-      exports: 'uikit'
     }
   }
 });
@@ -42,14 +38,14 @@ require([
   }
   String.prototype.format = function(i, safe, arg) {
     function format() {
-        var str = this, 
-            len = arguments.length+1;
-        
-        for (i=0; i < len; arg = arguments[i++]) {
-            safe = typeof arg === 'object' ? JSON.stringify(arg) : arg;
-            str = str.replace(RegExp('\\{'+(i-1)+'\\}', 'g'), safe);
-        }
-        return str;
+      var str = this;
+      var len = arguments.length+1;
+      
+      for (i=0; i < len; arg = arguments[i++]) {
+        safe = typeof arg === 'object' ? JSON.stringify(arg) : arg;
+        str = str.replace(RegExp('\\{'+(i-1)+'\\}', 'g'), safe);
+      }
+      return str;
     }
     format.native = String.prototype.format;
     return format;

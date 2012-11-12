@@ -8,8 +8,7 @@ define([
   'Underscore',
   'views/boiler',
   'text!/templates/rows/layer.html',
-  'mps',
-  'uikit'
+  'mps'
 ], function ($, _, Views, template, mps) {
   return Views.RowView.extend({
 
