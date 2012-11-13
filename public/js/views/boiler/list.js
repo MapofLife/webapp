@@ -20,14 +20,13 @@ define([
       this.parent = parent;
       this.views = [];
       this.setElement(this.make(this.tagName, this.attributes()));
-      // this.$el.hide();
+      this.$el.hide();
       this.parent.add(this.$el, this.model.get('position').y.toUpperCase());
       this.on('rendered', this.setup, this);
     },
 
     render: function () {
       this.$el.html(this.template());
-      // this.$el.show();
       this.trigger('rendered');
       return this;
     },

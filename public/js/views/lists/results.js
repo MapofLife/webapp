@@ -34,7 +34,7 @@ define([
     },
 
     events: {
-      //
+      'click .clearResults': 'clear'
     },
     
     setup: function () {
@@ -47,6 +47,12 @@ define([
       this.model.set('total_rows', results.response.total_rows);
       this.collection.reset(results.response.rows);
       this.render();
+      this.$el.show();
+    },
+
+    clear: function (e) {
+      this.$el.hide();
+      this.collection.reset();
     }
 
   });
