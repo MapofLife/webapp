@@ -6,20 +6,21 @@ define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'bus',
-  'mps',
-  'util'
-], function ($, _, Backbone, Bus, mps, util) {
+  'mps'
+], function ($, _, Backbone, mps) {
   return Backbone.View.extend({
 
     tagName: 'div',
 
-    initialize: function (options) {
-      this.parentView = options.parentView;
+    attributes: function () {
+      return {};
+    },
+
+    initialize: function (params, parent) {
+      this.parent = parent;
       this.on('rendered', this.setup, this);
-      this.parentView.on('rendered', _.bind(function () {
-        this.setElement(this.parentView.$('#' + this.model._type
-                        + '_' + this.model.id));
+      this.parent.on('rendered', _.bind(function () {
+        this.setElement(this.parent.$('#' + this.model.id));
         this.render();
       }, this));
     },

@@ -104,10 +104,11 @@ define([
     },
 
     addDisplays: function () {
-      // create the top-left control display
+      // top-left widgets
       this.displays.push(new ControlDisplay({
         widgets: [
-          { name: 'Search', position: { y: 'top' }}
+          { name: 'Search', position: { y: 'top' }},
+          { name: 'Results', position: { y: 'bottom' }}
         ],
         position: { x: 'left', y: 'top' }
       }, this).render());

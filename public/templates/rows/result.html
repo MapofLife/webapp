@@ -1,0 +1,29 @@
+<ul class="result">
+  <div class="resultSource">
+    <button>
+      <img class="source" title="Layer Source: <%= this.model.get('source_title') %>"
+          src="/img/search/<%= this.model.get('source_type') %>.png" />
+    </button>
+  </div>
+  <div class="resultType">
+    <button>
+      <img class="type" title="Layer Type: <%= this.model.get('type_title') %>"
+          src="/img/search/<%= this.model.get('type') %>.png" />
+    </button>
+  </div>
+  <div class="resultName">
+    <div class="resultRecords">
+      <%= this.model.get('feature_count') ? this.model.get('feature_count') + ' features' : '' %>
+    </div>
+    <div class="resultNomial"><%= this.model.get('name') %></div>
+    <div class="resultEnglishName" title="<%= this.model.get('names') %>">
+      <%= this.model.get('names') %>
+    </div>
+    <div class="resultAuthor"></div>
+  </div>
+  <label class="buttonContainer">
+    <input type="checkbox" class="checkbox" />
+    <span class="customCheck"></span>
+  </label>
+  </ul>
+<div class="break"></div>

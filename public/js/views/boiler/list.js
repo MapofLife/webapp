@@ -10,21 +10,24 @@ define([
 ], function ($, _, Backbone) {
   return Backbone.View.extend({
     
-    initialize: function (options) {
-      this.parentView = options.parentView;
-      this.on('rendered', this.setup, this);
-      this.views = [];
-      this.render({ loading: true })
-      // this.collection.on('fetched', this.render, this);
-      // this.collection.fetch();
+    tagName: 'div',
+
+    attributes: function () {
+      return {};
     },
 
-    render: function (options) {
-      this.$el.html(this.template(options));
-      if (!this.$el.closest('html').length) {
-        this.$el.remove();
-        this.$el.appendTo(this.parentView.$el);
-      }
+    initialize: function (params, parent) {
+      this.parent = parent;
+      this.views = [];
+      this.setElement(this.make(this.tagName, this.attributes()));
+      // this.$el.hide();
+      this.parent.add(this.$el, this.model.get('position').y.toUpperCase());
+      this.on('rendered', this.setup, this);
+    },
+
+    render: function () {
+      this.$el.html(this.template());
+      // this.$el.show();
       this.trigger('rendered');
       return this;
     },
@@ -34,16 +37,9 @@ define([
     },
 
     row: function (model) {
-      var view = new this.RowView({
-        parentView: this,
-        model: model
-      });
+      var view = new this.RowView({ model: model }, this);
       this.views.push(view);
       return view.toHTML();
-    },
-
-    unselect: function () {
-      this.$('.selected').removeClass('selected');
     }
 
   });

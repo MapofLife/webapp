@@ -1,13 +1,13 @@
 /**
- * The search view for running autocomplete name queries against CartoDB.
+ * Search view for running term queries against CartoDB
  */
+ 
 define([
   'jQuery',
   'Underscore',
   'Backbone',
   'models/widget',
-  // 'views/result',
-  'text!/templates/search.html',
+  'text!/templates/widgets/search.html',
   'mps'
 ], function ($, _, Backbone, Model, template, mps) {
   return Backbone.View.extend({
@@ -24,22 +24,23 @@ define([
     /**
      * Initialize by rendering the HTML template.
      *
-     * @params Object containing the Google Maps object.
+     * @params Object containing the map view.
      */
     initialize: function (params, parent) {
       this.display = parent;
       this.template = _.template(template);
-      this.model = new Model(_.extend({ name: 'Search' }, params));
+      this.model = new Model(params);
       this.on('rendered', this.setup, this);
       this.searching = {};
     },
 
     /**
-     * Render the view by adding it to the Google Map as a Control.
+     * Render the view by adding it to the Control Display.
      *
      */
     render: function () {
-      this.setElement(this.make(this.tagName, this.attributes(), this.template()));
+      this.setElement(this.make(this.tagName, this.attributes(),
+                      this.template()));
       this.display.add(this.$el, this.model.get('position').y.toUpperCase());
       this.trigger('rendered');
       return this;
@@ -200,10 +201,8 @@ define([
       return function (response) {
         var results = {term: term, response: response};
         mps.publish('hide-loading-indicator', source);
-        mps.publish('search-results', results);
+        mps.publish('search-results', [results]);
         this.$('input').autocomplete('enable');
-        console.log(results);
-        // new Result({ data: results });
       };
     },
 

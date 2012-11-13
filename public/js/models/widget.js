@@ -12,6 +12,10 @@ define([
       name: null,
       position: null,
       open: true
+    },
+
+    initialize: function () {
+      delete this.collection;
     }
 
   });
