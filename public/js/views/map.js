@@ -99,7 +99,7 @@ define([
         if (!window.google || !window.google.maps) return this;
         this.map = new google.maps.Map($('#canvas', this.el).get(0), this.options);
         this.addDisplays();
-      }      
+      }
       return this;
     },
 

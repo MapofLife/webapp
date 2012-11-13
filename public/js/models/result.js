@@ -10,8 +10,6 @@ define([
 ], function ($, _, Backbone, util) {
   return Backbone.Model.extend({
 
-    _type: 'layer',
-
     defaults: {
       on: true
     },
