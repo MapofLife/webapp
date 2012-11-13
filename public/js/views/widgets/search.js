@@ -72,13 +72,25 @@ define([
         search: _.bind(function (event, ui) {
           this.searching[input.val()] = true;
           this.names = [];
-          mps.publish('show-loading-indicator', {source : "autocomplete"});
+          mps.publish('show-loading-indicator', {source : 'autocomplete'});
         }, this),
         open: _.bind(function (event, ui) {
           this.searching[input.val()] = false;
-          mps.publish('hide-loading-indicator', {source : "autocomplete"});
+          mps.publish('hide-loading-indicator', {source : 'autocomplete'});
         }, this)
       });
+      $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+        item.label = item.label.replace(
+          new RegExp('(?![^&;]+;)(?!<[^<>]*)(' +
+             $.ui.autocomplete.escapeRegex(this.term) +
+             ')(?![^<>]*>)(?![^&;]+;)', 'gi'), 
+          '<strong>$1</strong>'
+        );
+        return $('<li></li>')
+          .data('item.autocomplete', item)
+          .append('<a>' + item.label + '</a>')
+          .appendTo(ul);
+      };
       return this;
     },
 
@@ -105,12 +117,11 @@ define([
      */
     handleAutocompleteResponse: function (response) {
       return function (json) {
-        var names = _.map(json.rows, _.bind(this.processRow, this))
+        var names = _.map(json.rows, _.bind(this.processRow, this));
         var sciNames = _.reduce(names, this.reduceNames(0), []);
         var engNames = _.reduce(names, this.reduceNames(1), []);        
-        if (sciNames.length > 0) {
+        if (sciNames.length > 0)
           this.names = sciNames;
-        }
         response(engNames);
         mps.publish('hide-loading-indicator', {source: 'autocomplete'});
       }
@@ -139,13 +150,11 @@ define([
                     '<span class="sci">{0}</span>' +
                     '<span class="eng">{1}</span>' +
                   '</div>';
-      if (row.n === undefined) {
+      if (row.n === undefined)
         return [];
-      }
       sciName = row.n;
-      if (row.v) {
-        engName = ', {0}'.format(engName.replace(/'S/g, "'s"));        
-      }
+      if (row.v)
+        engName = ', {0}'.format(row.v.replace(/'S/g, "'s"));
       return [sciName, {label: label.format(sciName, engName), value: sciName}];
     },
 

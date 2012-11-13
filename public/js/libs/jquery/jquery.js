@@ -21,6 +21,7 @@ define([
            // 'libs/jquery/js/jquery.ui.core',
            // 'libs/jquery/js/jquery.ui.widget',
            // 'libs/jquery/js/jquery.ui.autocomplete',
+           // 'libs/jquery/js/jquery.ui.autocomplete.regexp'
            // 'libs/jquery/js/jquery.ui.position'
            ]);
 
