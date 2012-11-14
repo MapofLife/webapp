@@ -1,5 +1,5 @@
 define([
-  'libs/jquery/jquery.min'
+  'libs/jquery/js/jquery.min'
 ], function () {
 
   jQuery.fn.serializeObject = function () {
@@ -15,14 +15,14 @@ define([
     return o;
   };
 
-  require(['libs/jquery/jquery.autogrow',
-           'libs/jquery/jquery.easing.min',
-           'libs/jquery/jquery.color.min',
-           'libs/jquery/jquery.hotkeys',
-           'libs/jquery/jquery.ui.core',
-           'libs/jquery/jquery.ui.widget',
-           'libs/jquery/jquery.ui.autocomplete',
-           'libs/jquery/jquery.ui.position'
+  require(['libs/jquery/js/jquery.easing.min',
+           'libs/jquery/js/jquery.hotkeys',
+           'libs/jquery/js/jquery-ui-1.8.18.custom.min',
+           // 'libs/jquery/js/jquery.ui.core',
+           // 'libs/jquery/js/jquery.ui.widget',
+           // 'libs/jquery/js/jquery.ui.autocomplete',
+           // 'libs/jquery/js/jquery.ui.autocomplete.regexp'
+           // 'libs/jquery/js/jquery.ui.position'
            ]);
 
   return jQuery;

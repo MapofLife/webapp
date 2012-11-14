@@ -1,44 +1,54 @@
 /**
- * The search view for running autocomplete name queries against CartoDB.
+ * Search view for running term queries against CartoDB
  */
+ 
 define([
   'jQuery',
   'Underscore',
   'Backbone',
-  'models/search',
-  'text!/templates/search.html',
+  'models/widget',
+  'text!/templates/widgets/search.html',
   'mps'
-], function ($, _, Backbone, Search, template, mps) {
+], function ($, _, Backbone, Model, template, mps) {
   return Backbone.View.extend({
 
     tagName: 'div',
 
-    className: 'widget',
+    attributes: function () {
+      return {
+        class: this.model ? 'mol-LayerControl-' + 
+                this.model.get('name') + ' widgetTheme' : ''
+      };
+    },
     
     /**
      * Initialize by rendering the HTML template.
      *
-     * @params Object containing the Google Maps object.
+     * @params Object containing the map view.
      */
-    initialize: function(params) {
-      this.template = _.template(template);  
-      this.map = params.map;
+    initialize: function (params, parent) {
+      this.display = parent;
+      this.template = _.template(template);
+      this.model = new Model(params);
       this.on('rendered', this.setup, this);
       this.searching = {};
     },
 
     /**
-     * Render the view by adding it to the Google Map as a Control.
+     * Render the view by adding it to the Control Display.
      *
      */
     render: function () {
-      this.$el.html(this.template()).appendTo(this.parent);
-      this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(this.el);
+      this.setElement(this.make(this.tagName, this.attributes(),
+                      this.template()));
+      this.display.add(this.$el, this.model.get('position').y.toUpperCase());
       this.trigger('rendered');
       return this;
     },
 
     events: {
+      'click .execute': 'execute',
+      'click .toggle': 'toggle'
     },
 
     /**
@@ -46,30 +56,42 @@ define([
      */
     setup: function () {
       var input = this.$('input');
-      input.bind('keyup.return', _.bind(function() {
+      input.bind('keyup.return', _.bind(function () {
         this.search(input.val());
       }, this));
       input.autocomplete({
         minLength: 3,
         source: _.bind(this.queryAutocomplete, this),
-        select: _.bind(function(event, ui) {
+        select: _.bind(function (event, ui) {
           this.searching[ui.item.value] = false;
           this.names = [ui.item.value];
           this.search(ui.item.value);
         }, this),
-        close: _.bind(function(event,ui) {
+        close: _.bind(function (event, ui) {
           // NOP
         }, this),
-        search: _.bind(function(event, ui) {
+        search: _.bind(function (event, ui) {
           this.searching[input.val()] = true;
           this.names = [];
-          mps.publish('show-loading-indicator', {source : "autocomplete"});
+          mps.publish('show-loading-indicator', {source : 'autocomplete'});
         }, this),
-        open: _.bind(function(event, ui) {
+        open: _.bind(function (event, ui) {
           this.searching[input.val()] = false;
-          mps.publish('hide-loading-indicator', {source : "autocomplete"});
+          mps.publish('hide-loading-indicator', {source : 'autocomplete'});
         }, this)
       });
+      $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+        item.label = item.label.replace(
+          new RegExp('(?![^&;]+;)(?!<[^<>]*)(' +
+             $.ui.autocomplete.escapeRegex(this.term) +
+             ')(?![^<>]*>)(?![^&;]+;)', 'gi'), 
+          '<strong>$1</strong>'
+        );
+        return $('<li></li>')
+          .data('item.autocomplete', item)
+          .append('<a>' + item.label + '</a>')
+          .appendTo(ul);
+      };
       return this;
     },
 
@@ -80,7 +102,7 @@ define([
      * @param request The autocomplete request containing the search term.
      * @param response The autocomplete response callback.
      */
-    queryAutocomplete: function(request, response) {
+    queryAutocomplete: function (request, response) {
       var term = $.trim(request.term).replace(/ /g, ' ');
       var sql = CartoDB.sql.autocomplete.format(term);
       var url = CartoDB.url.sql.format(sql);
@@ -94,14 +116,13 @@ define([
      * 
      * @param response The autocomplete response callback.
      */
-    handleAutocompleteResponse: function(response) {
-      return function(json) {
-        var names = _.map(json.rows, _.bind(this.processRow, this))
+    handleAutocompleteResponse: function (response) {
+      return function (json) {
+        var names = _.map(json.rows, _.bind(this.processRow, this));
         var sciNames = _.reduce(names, this.reduceNames(0), []);
         var engNames = _.reduce(names, this.reduceNames(1), []);        
-        if (sciNames.length > 0) {
+        if (sciNames.length > 0)
           this.names = sciNames;
-        }
         response(engNames);
         mps.publish('hide-loading-indicator', {source: 'autocomplete'});
       }
@@ -110,8 +131,8 @@ define([
     /**
      * Returns a function used to reduce names into English or Scientific.
      */
-    reduceNames: function(index) {
-      return function(memo, x) {
+    reduceNames: function (index) {
+      return function (memo, x) {
         memo.push(x[index]);
         return memo;
       };
@@ -123,27 +144,34 @@ define([
      *
      * @param row The CartoDB row.
      */
-    processRow: function(row) {
+    processRow: function (row) {
       var engName = '';
       var sciName = '';
       var label = '<div class="ac-item">' +
                     '<span class="sci">{0}</span>' +
                     '<span class="eng">{1}</span>' +
                   '</div>';
-      if (row.n === undefined) {
+      if (row.n === undefined)
         return [];
-      }
       sciName = row.n;
-      if (row.v) {
-        engName = ', {0}'.format(engName.replace(/'S/g, "'s"));        
-      }
+      if (row.v)
+        engName = ', {0}'.format(row.v.replace(/'S/g, "'s"));
       return [sciName, {label: label.format(sciName, engName), value: sciName}];
+    },
+
+    /**
+     * Perform a search when Go is clicked.
+     */
+    execute: function (e) {
+      var input = this.$('input');
+      this.search(input.val());
+      return this;
     },
 
     /**
      * Search CartoDB on the supplied term.
      */
-    search: function(term) {
+    search: function (term) {
       var sql = null;
       var url = null;
       var source = null;
@@ -169,14 +197,21 @@ define([
     /**
      * Return a function for handling a CartoDB search response.
      */
-    handleSearchResponse: function(term, source) {
-      return function(response) {
-        var results = {term:term, response:response};
+    handleSearchResponse: function (term, source) {
+      return function (response) {
+        var results = {term: term, response: response};
         mps.publish('hide-loading-indicator', source);
-        mps.publish('search-results', results);
+        mps.publish('search-results', [results]);
         this.$('input').autocomplete('enable');
-        console.log(results);
       };
-    }
+    },
+
+    toggle: function (e) {
+      if (this.$el.hasClass('off'))
+        this.$el.removeClass('off');
+      else
+        this.$el.addClass('off');
+    },
+
   });
 });

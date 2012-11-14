@@ -1,0 +1,25 @@
+<div class="filters"></div>
+<div class="searchResults widgetTheme">
+  <% if (this.collection.models.length > 0) { %>
+    <div class="results">
+      <div class="resultHeader">
+        Results
+        <a href="#" class="selectNone">none</a>
+        <a href="#" class="selectAll">all</a>
+      </div>
+      <ol class="resultList">
+        <% _.each(this.collection.models, _.bind(function (row) { %>
+          <%= this.row(row) %>
+        <% }, this)); %>
+      </ol>
+      <div class="pageNavigation">
+        <button class="addAll">Map Selected Layers</button>
+        <button class="clearResults">Clear Results</button>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="noresults">
+      <h3>No results found.</h3>
+    </div>
+  <% } %>
+</div>

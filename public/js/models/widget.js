@@ -9,9 +9,13 @@ define([
   return Backbone.Model.extend({
 
     defaults: {
-      open: true,
-      width: 0,
-      height: 0
+      name: null,
+      position: null,
+      open: true
+    },
+
+    initialize: function () {
+      delete this.collection;
     }
 
   });
