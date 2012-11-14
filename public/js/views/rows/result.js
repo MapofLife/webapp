@@ -57,6 +57,10 @@ define([
   // TODO: This gets called multiple times when clicking checkbox.
     selected: function(e) {
       console.log('Layer', this.model.id, 'was selected.');
+    },
+
+    checked: function(show) {
+      this.$('.checkbox').attr('checked', show);
     }
 
   });

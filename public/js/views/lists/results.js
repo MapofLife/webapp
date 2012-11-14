@@ -62,13 +62,19 @@ define([
       this.collection.reset();
     },
 
+    toggle: function(show) {
+      _.each(this.views, function(view) {
+        view.checked(show);
+      });
+    },
+    
     selectAll: function(e) {
-      console.log('TODO: Select all');
+      this.toggle(true);
     },
 
     selectNone: function(e) {
-      console.log('TODO: Select none');
-    }
+      this.toggle(false);
+    },
 
   });
 });
