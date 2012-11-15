@@ -34,12 +34,29 @@ define([
     },
 
     events: {
-      //
+      'click .source': 'showSource',
+      'click .type': 'showType',
+      'click .buttonContainer': 'selected'
     },
 
     setup: function () {
       Views.RowView.prototype.setup.call(this);
       return this;
+    },
+
+    // TODO: This gets called multiple times when clicking source.
+    showSource: function(e) {
+      console.log('TODO: Show source.');
+    },
+
+  // TODO: This gets called multiple times when clicking type.
+    showType: function(e) {
+      console.log('TODO: Show type.');
+    },
+
+  // TODO: This gets called multiple times when clicking checkbox.
+    selected: function(e) {
+      console.log('Layer', this.model.id, 'was selected.');
     }
 
   });

@@ -34,7 +34,10 @@ define([
     },
 
     events: {
-      'click .clearResults': 'clear'
+      'click .clearResults': 'clear',
+      'click .addAll': 'addAll',
+      'click .selectAll' : 'selectAll',
+      'click .selectNone' : 'selectNone'
     },
     
     setup: function () {
@@ -50,9 +53,21 @@ define([
       this.$el.show();
     },
 
+    addAll: function(e) {
+      console.log('TODO: Map selected layers.');
+    },
+
     clear: function (e) {
       this.$el.hide();
       this.collection.reset();
+    },
+
+    selectAll: function(e) {
+      console.log('TODO: Select all');
+    },
+
+    selectNone: function(e) {
+      console.log('TODO: Select none');
     }
 
   });
