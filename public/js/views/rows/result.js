@@ -7,9 +7,8 @@ define([
   'jQuery',
   'Underscore',
   'views/boiler',
-  'text!/templates/rows/result.html',
-  'mps'
-], function ($, _, Views, template, mps) {
+  'text!/templates/rows/result.html'
+], function ($, _, Views, template) {
   return Views.RowView.extend({
 
     attributes: function () {

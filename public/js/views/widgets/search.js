@@ -5,11 +5,11 @@
 define([
   'jQuery',
   'Underscore',
+  'mps',
   'Backbone',
   'models/widget',
-  'text!/templates/widgets/search.html',
-  'mps'
-], function ($, _, Backbone, Model, template, mps) {
+  'text!/templates/widgets/search.html'
+], function ($, _, mps, Backbone, Model, template) {
   return Backbone.View.extend({
 
     tagName: 'div',
@@ -206,6 +206,9 @@ define([
       };
     },
 
+    /**
+     * Toggle view style.
+     */
     toggle: function (e) {
       if (this.$el.hasClass('off'))
         this.$el.removeClass('off');

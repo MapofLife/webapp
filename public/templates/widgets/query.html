@@ -1,0 +1,27 @@
+<span class="title">Species Lists</span>
+<button id="speciesListButton" class="toggleBtn selected" title="Click to activate species list querying.">ON</button>
+<div class="speciesDisplay" style="">
+  Radius
+  <select class="radius">
+    <option selected="" value="50">50 km</option>
+    <option value="100">100 km</option>
+    <option value="300">300 km</option>
+  </select>
+  Group
+  <select class="dataset_id">
+    <option data-range="jetz_maps" data-class="Aves">Birds</option>
+    <option data-range="na_fish" data-class="Fishes">NA Freshwater Fishes</option>
+    <option data-range="iucn_reptiles" data-regionalchecklist="ecoregion_species" data-class="Reptilia">NA Reptiles</option>
+    <option data-range="iucn_amphibians" data-class="Amphibia">Amphibians</option>
+    <option data-range="iucn_mammals" data-class="Mammalia">Mammals</option>
+  </select>
+  <!-- <span class="types">
+    <button class="range selected" value="range" style="display: none;">
+      <img title="Click to use Expert range maps for query." src="/static/maps/search/range.png" />
+    </button>
+    <button class="ecoregion" value="regionalchecklist" style="display: none;">
+      <img title="Click to use Regional checklists for query." src="/static/maps/search/ecoregion.png" />
+    </button>
+  </span> -->
+</div>
+

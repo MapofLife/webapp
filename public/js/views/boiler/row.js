@@ -5,9 +5,8 @@ define([
   // dependencies
   'jQuery',
   'Underscore',
-  'Backbone',
-  'mps'
-], function ($, _, Backbone, mps) {
+  'Backbone'
+], function ($, _, Backbone) {
   return Backbone.View.extend({
 
     tagName: 'div',
