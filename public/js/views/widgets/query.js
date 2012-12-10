@@ -63,8 +63,75 @@ define([
      * click event was triggered from the map.
      */
     execute: function (params) {
-      console.log('MAP CLICK EVENT: ', params.gmaps_event)
+      var listRadius,
+          dataset_id = $("option:selected", this.$(".dataset_id"))
+                        .data( $('.selected',this.$(".types")).val() ),
+          className = $("option:selected", this.$(".dataset_id")).text();
+      
+      listRadius = new google.maps.Circle(
+        {
+          map: params.map,
+          radius: parseInt(this.$('.radius').val())*1000,
+          center: params.gmaps_event.latLng,
+          strokeWeight: 3,
+          strokeColor: 'darkred',
+          clickable: false,
+          fillOpacity: 0
+        }
+      );
+      
+      this.getList(params.gmaps_event.latLng.lat(),
+                   params.gmaps_event.latLng.lng(),
+                   listRadius,
+                   dataset_id,
+                   className);
+                   
+      //ALSO TODO based on this event
+      //destroy help tip
+      //make sure module is enabled and on
+      //fire show-loading-indicator event
+      //close existing list windows
+                                    
       return this;
+    },
+    
+    getList: function(lat, lng, rad, id, clName) {
+      var sql = null,
+          csv_sql = null,
+          //existing hardcoding of species class
+          //not sure if this is still valid, need to check with Jeremy
+          cl = (id == "ecoregion_species") ? "Reptilia" : "";
+      
+      sql = CartoDB.sql.speciesQuery.format(
+        id, Math.round(lng*100)/100, Math.round(lat*100)/100, rad.radius, cl);
+      csv_sql = CartoDB.sql.speciesQueryCsv.format(
+        id, Math.round(lng*100)/100, Math.round(lat*100)/100, rad.radius, cl);
+                
+      //ALSO TODO to make request
+      //make sure no other queries are running
+      //toggle running query indicator
+      
+      $.getJSON(
+        CartoDB.url.query.format(sql), 
+        _.bind(this.handleQueryResponse(rad, id, cl, clName, csv_sql), this)
+      );             
+    },
+    
+    handleQueryResponse: function(rad, id, cl, clName, csv_sql) {
+      return function (response) {
+        var results = {
+                          listRadius: rad,
+                          dataset_id: id,
+                          cl: cl,
+                          className : clName,
+                          response: response,
+                          sql: csv_sql
+                      };
+        
+        console.log("handleQueryResponse", response);
+        
+        mps.publish('species-list-query-results', results); 
+      };
     },
 
     /**

@@ -78,10 +78,15 @@ define([
                     'l.scientificname = n.n ' +
                 'WHERE ' +
                      "n.n~*'\\m{0}' OR n.v~*'\\m{0}' " +
-                'ORDER BY name, type_sort_order'
+                'ORDER BY name, type_sort_order',
+          speciesQuery: "SELECT * FROM " + 
+                        "get_species_list('{0}',{1},{2},{3},'{4}')",
+          speciesQueryCsv: "SELECT * FROM " +
+                           "get_species_list_csv('{0}',{1},{2},{3},'{4}')"
         };
         CartoDB.url = {
-          sql: 'http://d3dvrpov25vfw0.cloudfront.net/api/v2/sql?callback=?&q={0}'
+          sql: 'http://d3dvrpov25vfw0.cloudfront.net/api/v2/sql?callback=?&q={0}',
+          query: 'http://mol.cartodb.com/api/v2/sql?callback=?&q={0}'
         };
       });
       // Bus.init();
