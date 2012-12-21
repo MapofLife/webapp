@@ -1182,8 +1182,7 @@ div.mol-Dashboard-TableWindow {
 .mol-Map-QueryDisplay div.speciesDisplay {
     float: left;
     font-size: 0.7em;
-    margin-right: 2px;
-    margin-top: 6px;
+    margin: 3px 2px 0 4px;
 }
 
 .mol-Map-QueryDisplay div.speciesDisplay select {

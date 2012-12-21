@@ -8,8 +8,9 @@ define([
   'mps',
   'Backbone',
   'models/widget',
-  'text!/templates/widgets/query.html'
-], function ($, _, mps, Backbone, Model, template) {
+  'text!/templates/widgets/query.html',
+  'views/lists/species'
+], function ($, _, mps, Backbone, Model, template, Results) {
   return Backbone.View.extend({
 
     tagName: 'div',
@@ -30,6 +31,7 @@ define([
       this.display = parent;
       this.template = _.template(template);
       this.model = new Model(params);
+      this.results = new Results;
       this.on('rendered', this.setup, this);
       this.searching = {};
       mps.subscribe('species-list-query-click', _.bind(this.execute, this));
@@ -129,6 +131,7 @@ define([
                       };
         
         console.log("handleQueryResponse", response);
+        this.results.render(response);
         
         mps.publish('species-list-query-results', results); 
       };
