@@ -34,6 +34,7 @@ define([
       this.results = new Results;
       this.on('rendered', this.setup, this);
       this.searching = {};
+      this.queryRunning = 0;
       mps.subscribe('species-list-query-click', _.bind(this.execute, this));
     },
 
@@ -110,13 +111,19 @@ define([
         id, Math.round(lng*100)/100, Math.round(lat*100)/100, rad.radius, cl);
                 
       //ALSO TODO to make request
-      //make sure no other queries are running
       //toggle running query indicator
       
-      $.getJSON(
+      if(self.queryRunning > 0) {
+        alert('Please wait for your last species list querying to complete' + 
+          'before starting another.');
+      } else {
+        self.queryRunning++;
+        
+        $.getJSON(
         CartoDB.url.query.format(sql), 
-        _.bind(this.handleQueryResponse(rad, id, cl, clName, csv_sql), this)
-      );             
+          _.bind(this.handleQueryResponse(rad, id, cl, clName, csv_sql), this)
+        ); 
+      }        
     },
     
     handleQueryResponse: function(rad, id, cl, clName, csv_sql) {
@@ -129,6 +136,8 @@ define([
                           response: response,
                           sql: csv_sql
                       };
+                      
+        self.queryRunning--;
         
         console.log("handleQueryResponse", response);
         this.results.render(response);
