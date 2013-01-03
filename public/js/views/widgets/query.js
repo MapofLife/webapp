@@ -8,8 +8,7 @@ define([
   'mps',
   'Backbone',
   'models/widget',
-  'text!/templates/widgets/query.html',
-  'views/lists/species'
+  'text!/templates/widgets/query.html'
 ], function ($, _, mps, Backbone, Model, template, Results) {
   return Backbone.View.extend({
 
@@ -31,7 +30,6 @@ define([
       this.display = parent;
       this.template = _.template(template);
       this.model = new Model(params);
-      this.results = new Results;
       this.on('rendered', this.setup, this);
       this.searching = {};
       this.queryRunning = 0;
@@ -125,24 +123,22 @@ define([
         ); 
       }        
     },
-    
+
     handleQueryResponse: function(rad, id, cl, clName, csv_sql) {
       return function (response) {
         var results = {
-                          listRadius: rad,
-                          dataset_id: id,
-                          cl: cl,
-                          className : clName,
-                          response: response,
-                          sql: csv_sql
-                      };
-                      
+          listRadius: rad,
+          dataset_id: id,
+          cl: cl,
+          className : clName,
+          response: response,
+          sql: csv_sql
+        };
+
         self.queryRunning--;
-        
-        console.log("handleQueryResponse", response);
-        this.results.render(response);
-        
-        mps.publish('species-list-query-results', results); 
+
+        //Publish the results for the species list modal view.
+        mps.publish('species-list-query-results', [results]); 
       };
     },
 

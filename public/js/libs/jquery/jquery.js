@@ -18,10 +18,11 @@ define([
   require(['libs/jquery/js/jquery.easing.min',
            'libs/jquery/js/jquery.hotkeys',
            'libs/jquery/js/jquery-ui-1.8.18.custom.min',
+           'libs/jquery/js/jquery.tablesorter'
            // 'libs/jquery/js/jquery.ui.core',
            // 'libs/jquery/js/jquery.ui.widget',
            // 'libs/jquery/js/jquery.ui.autocomplete',
-           // 'libs/jquery/js/jquery.ui.autocomplete.regexp'
+           // 'libs/jquery/js/jquery.ui.autocomplete.regexp',
            // 'libs/jquery/js/jquery.ui.position'
            ]);
 

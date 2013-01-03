@@ -17,7 +17,7 @@ table.listable * {
 }
 
 table.listtable div.arrow {
-    background: transparent url(../static/arrows.png) no-repeat scroll 0px -16px;
+    background: transparent url(/img/arrows.png) no-repeat scroll 0px -16px;
     width: 16px;
     height: 16px;
     display: block;
@@ -44,19 +44,19 @@ table.listtable td {
 }
 
 table.listtable th.tablesorter-headerSortUp {
-    background: #e6edc1 url(../static/tablesorter_bkgrd.png) no-repeat 100% -80px;
+    background: #e6edc1 url(/img/tablesorter_bkgrd.png) no-repeat 100% -80px;
 }
 
 table.listtable th.tablesorter-headerSortUp span {
-    background: #e6edc1 url(../static/tablesorter_bkgrd.png) no-repeat 0 -80px;
+    background: #e6edc1 url(/img/tablesorter_bkgrd.png) no-repeat 0 -80px;
 }
 
 table.listtable th.tablesorter-headerSortDown {
-    background: #e6edc1 url(../static/tablesorter_bkgrd.png) no-repeat 100% 2px;
+    background: #e6edc1 url(/img/tablesorter_bkgrd.png) no-repeat 100% 2px;
 }
 
 table.listtable th.tablesorter-headerSortDown span {
-    background: #e6edc1 url(../static/tablesorter_bkgrd.png) no-repeat 0 2px;
+    background: #e6edc1 url(/img/tablesorter_bkgrd.png) no-repeat 0 2px;
 }
 
 table.listtable th span {

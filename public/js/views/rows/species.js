@@ -11,14 +11,12 @@ define([
 ], function ($, _, Views, template) {
   return Views.RowView.extend({
 
+    tagName: 'tr',
+
     attributes: function () {
       return _.extend({
-        // class: this.model ? 'resultContainer'
-        //     + ' name-' + this.model.get('name').replace(/ /g, '_') 
-        //     + ' source_type-' + this.model.get('source_type')
-        //     + ' type-' + this.model.get('type')
-        //     : '',
-        // id: this.model.id
+        class: this.model ? this.model.get('tclass') : '',
+        id: this.model.id
       }, Views.ListView.prototype.attributes.call(this));
     },
 

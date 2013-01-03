@@ -3,6 +3,10 @@ body, html, .wrap, .content, #map, #canvas {
   height: 100%;
 }
 
+.clearfix:before,.clearfix:after{content:"";display:table;} 
+.clearfix:after{clear:both;} 
+.clearfix{zoom:1;} 
+
 a.header-button {
   font-size: 11px;
   padding: 0 12px;
