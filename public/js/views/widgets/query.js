@@ -119,6 +119,8 @@ define([
       } else {
         self.queryRunning++;
         
+        mps.publish('show-loading-indicator', {source: 'query'});
+        
         $.getJSON(
         CartoDB.url.query.format(sql), 
           _.bind(this.handleQueryResponse(rad, id, cl, clName, csv_sql), this)
@@ -143,6 +145,7 @@ define([
         this.results.render(response);
         
         mps.publish('species-list-query-results', results); 
+        mps.publish('hide-loading-indicator', {source: 'query'});
       };
     },
 
