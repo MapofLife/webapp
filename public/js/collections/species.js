@@ -40,7 +40,7 @@ define([
         this.speciesdd += (red_list_status.indexOf('DD')>0)  ? 1 : 0;
       }, this));
 
-      stats = (this.speciesthreatened > 0) ?
+      this.stats = (this.speciesthreatened > 0) ?
           ('(' + this.speciesthreatened + ' considered threatened by ' +
           '<a href="http://www.iucnredlist.org" ' +
           'target="_iucn">IUCN</a> '+this.years.join(',')+')') : '';

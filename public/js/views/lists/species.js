@@ -30,7 +30,13 @@ define([
       Views.ListView.prototype.initialize.call(this, params, parent);
     },
 
-    render: function (results) { 
+    render: function (results) {
+      var mmlHeight,
+          iucnlist,
+          iucndata,
+          options,
+          chart;
+          
       Views.ListView.prototype.render.call(this);
       latHem = (results.listRadius.center.lat() > 0) ? 'N' : 'S';
       lngHem = (results.listRadius.center.lng() > 0) ? 'E' : 'W';
@@ -58,7 +64,7 @@ define([
             .height($(".mol-Map-ListDialog").height()-125);
       });
       
-      var mmlHeight;
+
 
       //initialize tabs and set height
       listTabs = $("#tabs").tabs();
@@ -113,6 +119,32 @@ define([
       });
 
       listTabs.tabs("select", 0);
+      
+      //iucn pie chart
+      $("#iucnChartDiv").height(mmlHeight-140);
+
+      iucnlist = this.getRedListCounts(results.response.rows);
+      iucndata = google.visualization.arrayToDataTable(iucnlist);
+
+      options = {
+        width: 605,
+        height: $("#iucnChartDiv").height(),
+        backgroundColor: 'transparent',
+        title: 'Species by IUCN Status',
+        colors: ['#006666',
+                 '#88c193',
+                 '#cc9900',
+                 '#cc6633',
+                 '#cc3333',
+                 '#FFFFFF',
+                 '#000000'],
+        pieSliceText: 'none',
+        chartArea: {left:125, top:25, width:"100%", height:"85%"}
+      };
+
+      chart = new google.visualization.PieChart(
+        document.getElementById('iucnChartDiv'));
+      chart.draw(iucndata, options);
 
       this.$el.dialog({
          beforeClose: function(evt, ui) {
@@ -368,6 +400,55 @@ define([
           self.wikiError(row);
         }
       );
+    },
+    
+    /*
+     * Bins the IUCN species for a list query request into categories
+     * and returns an associate array with totals
+     */
+    getRedListCounts: function(rows) {
+      var iucnListArray = [
+            ['IUCN Status', 'Count'],
+            ['LC',0],
+            ['NT',0],
+            ['VU',0],
+            ['EN',0],
+            ['CR',0],
+            ['EW',0],
+            ['EX',0]
+          ], 
+          redlist;
+
+      _.each(rows, function(row) {
+        redlist = (row.redlist != null) ?
+          _.uniq(row.redlist.split(',')).join(',') : '';
+
+        switch(redlist) {
+          case "LC":
+            iucnListArray[1][1]++;
+            break;
+          case "NT":
+            iucnListArray[2][1]++;
+            break;
+          case "VU":
+            iucnListArray[3][1]++;
+            break;
+          case "EN":
+            iucnListArray[4][1]++;
+            break;
+          case "CR":
+            iucnListArray[5][1]++;
+            break;
+          case "EW":
+            iucnListArray[6][1]++;
+            break;
+          case "EX":
+            iucnListArray[7][1]++;
+            break;
+        }
+      });
+
+      return iucnListArray;
     },
 
   });

@@ -75,18 +75,31 @@
   </div>
   <ul id="gallery" style="overflow: auto;"></ul>
 </div>
-<div id="iucnTab" class="ui-tabs-panel">IUCN.</div>
+<div id="iucnTab" class="ui-tabs-panel">
+  <% if (this.model.get('total_rows') > 0) { %>
+    <div class="mol-Map-ListQuery mol-Map-ListQueryInfo">
+      <div id="iucnChartDiv"></div>
+      <div class="iucn_stats">
+        <%= this.collection.stats %>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="mol-Map-ListQueryEmptyInfoWindow">
+      <b>No species found.</b>
+    </div>
+  <% } %>
+</div>
 <div id="dlTab" class="ui-tabs-panel">
-    <% if (this.model.get('total_rows') > 0) { %>
-      <div class="mol-Map-ListQuery">
-        <div>
-          <a href= <%= this.model.get('sqlurl') %> 
-             class="mol-Map-ListQueryDownload">Download CSV</a>
-        </div>
+  <% if (this.model.get('total_rows') > 0) { %>
+    <div class="mol-Map-ListQuery">
+      <div>
+        <a href= <%= this.model.get('sqlurl') %> 
+           class="mol-Map-ListQueryDownload">Download CSV</a>
       </div>
-    <% } else { %>
-      <div class="mol-Map-ListQueryEmptyInfoWindow">
-        <b>No list to download.</b>
-      </div>
-    <% } %>
+    </div>
+  <% } else { %>
+    <div class="mol-Map-ListQueryEmptyInfoWindow">
+      <b>No list to download.</b>
+    </div>
+  <% } %>
 </div>
