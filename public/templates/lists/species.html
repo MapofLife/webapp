@@ -76,4 +76,17 @@
   <ul id="gallery" style="overflow: auto;"></ul>
 </div>
 <div id="iucnTab" class="ui-tabs-panel">IUCN.</div>
-<div id="dlTab" class="ui-tabs-panel">Download.</div>
+<div id="dlTab" class="ui-tabs-panel">
+    <% if (this.model.get('total_rows') > 0) { %>
+      <div class="mol-Map-ListQuery">
+        <div>
+          <a href= <%= this.model.get('sqlurl') %> 
+             class="mol-Map-ListQueryDownload">Download CSV</a>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="mol-Map-ListQueryEmptyInfoWindow">
+        <b>No list to download.</b>
+      </div>
+    <% } %>
+</div>

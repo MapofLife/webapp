@@ -145,6 +145,10 @@ define([
       this.model.set('term', results.term);
       this.model.set('time', results.response.time);
       this.model.set('total_rows', results.response.total_rows);
+      this.model.set('sqlurl', CartoDB.url.query
+                                .format(
+                                  encodeURIComponent(results.sql)) +
+                                '&format=csv');
       this.collection.reset(results.response.rows);
       this.collection.process();
       this.render(results);
