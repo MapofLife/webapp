@@ -49,23 +49,78 @@ define([
                    results.listRadius.center.lng()*1000)/1000) +
                    '&deg;&nbsp;' + lngHem
       });
+
+      $(".mol-Map-ListDialog").parent().bind("resize", function() {
+        $(".mol-Map-ListQueryInfoWindow")
+            .height($(".mol-Map-ListDialog").height()-125);
+
+        $("#gallery")
+            .height($(".mol-Map-ListDialog").height()-125);
+      });
+      
+      var mmlHeight;
+
+      //initialize tabs and set height
+      listTabs = $("#tabs").tabs();
+
+      $(".mol-Map-ListQueryDownload").button();
+      mmlHeight = $(".mol-Map-ListDialog").height();
+      $(".mol-Map-ListQueryInfoWindow").height(mmlHeight-125);
+      $("#gallery").height(mmlHeight-125);
+
+      //Setup events on the table
+      var self = this;
       $('table.listtable tr:odd').addClass('master');
       $('table.listtable tr:not(.master)').hide();
       $('table.listtable tr:first-child').show();
       $('table.listtable tr.master td.arrowBox').click(
-          function() {
-              $(this).parent().next('tr').toggle();
-              $(this).parent().find('.arrow').toggleClass('up');
+        function() {
+          $(this).parent().next('tr').toggle();
+          $(this).parent().find('.arrow').toggleClass('up');
 
-              if(!$(this).parent().hasClass('hasWiki')) {
-                  $(this).parent().addClass('hasWiki');
-                  self.callWiki($(this).parent());
-              }
+          if(!$(this).parent().hasClass('hasWiki')) {
+              $(this).parent().addClass('hasWiki');
+              self.callWiki($(this).parent());
           }
+        }
       );
       $('.listtable', this.$el).tablesorter({
           sortList: [[5,0]]
       });
+
+      _.each($('.wiki', this.$el), function (wiki) {
+        $(wiki).click(function (event) {
+          var win = window.open(
+            'http://en.wikipedia.com/wiki/'+
+            $(this).text().split(',')[0]
+                .replace(/ /g, '_')
+          );
+          win.focus();
+        });
+      });
+
+      _.each($('.iucn', this.$el), function (iucn) {
+        if ($(iucn).data('scientificname') != '') {
+          $(iucn).click(function (event) {
+            var win = window.open(
+              'http://www.iucnredlist.org/' +
+              'apps/redlist/search/external?text='
+              +$(this).data('scientificname')
+            );
+            win.focus();
+          });
+        }
+      });
+
+      listTabs.tabs("select", 0);
+
+      this.$el.dialog({
+         beforeClose: function(evt, ui) {
+           listTabs.tabs("destroy");
+           $(".mol-Map-ListDialogContent").remove();
+         }
+      });
+
       return this;
     },
 
@@ -75,6 +130,15 @@ define([
     
     setup: function () {
       return Views.ListView.prototype.setup.call(this);
+    },
+
+    row: function (model) {
+      var view = new this.RowView({ model: model }, this);
+      this.views.push(view);
+      return view.toHTML()
+          + '<tr class="tablesorter-childRow">'
+          + '<td colspan="7" value="' + model.get('scientificname')
+          + '"></td></tr>';
     },
 
     receive: function (results) {
@@ -93,135 +157,214 @@ define([
     },
 
     /*
-     * Processes response content for List dialog
+     * Callback for Wikipedia Json-P request
      */
-    // processListRows: function (listrad, clnm, latH, lngH, rows, sqlurl) {
-    //   var self = this,
-    //       listradius = listrad,
-    //       className = clnm,
-    //       latHem = latH,
-    //       lngHem = lngH,
-    //       tablerows = [],
-    //       providers = [],
-    //       scientificnames = {},
-    //       years = [],
-    //       redlistCt = {},
-    //       stats,
-    //       speciestotal = 0,
-    //       speciesthreatened = 0,
-    //       speciesdd = 0;
+    wikiCallback: function(data, row,q,qs,eolimg,eolpage) {
+      var wikidata,
+          wikiimg,
+          prop,
+          a,
+          imgtitle,
+          req,
+          reqs,
+          i,
+          e,
+          self = this;
 
-    //   _.each(rows, function (row) {
-          
-    //     }
-    //   );
-    //   years = _.uniq(years);
-    //   tablerows = _.uniq(tablerows);
-    //   providers = _.uniq(providers);
+      for(e in data.query.pages) {
+        if(e != -1) {
+          prop = data.query.pages[e];
+          wikidata = prop.extract
+              .replace('...','')
+              .replace('<b>','<strong>')
+              .replace('<i>','<em>')
+              .replace('</b>','</strong>')
+              .replace('</i>','</em>')
+              .replace('<br />',"")
+              .replace(/<p>/g,'<div>')
+              .replace(/<\/p>/g,'</div>')
+              .replace(/<h2>/g,'<strong>')
+              .replace(/<\/h2>/g,'</strong>')
+              .replace(/<h3>/g,'<strong>')
+              .replace(/<\/h3>/g,'</strong>')
+              .replace(/\n/g,"")
+              .replace('</div>\n<div>'," ")
+              .replace('</div><div>'," ")
+              .replace('</div><strong>'," <strong> ")
+              .replace('</strong><div>'," </strong> ");
 
-    //   years = _.sortBy(_.uniq(years), function (val) { return val; });
+          $(row).next().find('td').html(wikidata);
+          $(row).next().find('td div br').remove();
 
-    //   years[years.length-1] = (years.length > 1) ?
-    //       ' and ' + years[years.length-1] : years[years.length-1];
+          a = prop.images;
 
-    //   _.each(scientificnames, function (red_list_status) {
-    //       speciestotal++;
-    //       speciesthreatened +=
-    //           ((red_list_status.indexOf('EN')>=0) ||
-    //            (red_list_status.indexOf('VU')>=0) ||
-    //            (red_list_status.indexOf('CR')>=0) ||
-    //            (red_list_status.indexOf('EX')>=0) ||
-    //            (red_list_status.indexOf('EW')>=0) )  ?
-    //               1 : 0;
-    //       speciesdd +=
-    //           (red_list_status.indexOf('DD')>0)  ?
-    //               1 : 0;
-    //     }
-    //   );
+          for(i=0;i < a.length;i++) {
+            imgtitle = a[i].title;
 
-    //   stats = (speciesthreatened > 0) ?
-    //       ('(' + speciesthreatened + ' considered threatened by ' +
-    //       '<a href="http://www.iucnredlist.org" ' +
-    //       'target="_iucn">IUCN</a> '+years.join(',')+')') : '';
+            req = new RegExp(q, "i");
+            reqs = new RegExp(qs, "i");
 
-    //   if (speciestotal > 0) {
-    //     content = $('' +
-    //                 '<div class="mol-Map-ListQueryInfo">' +
-    //                 '   <div class="mol-Map-ListQuery">' +
-    //                        'Data type/source:&nbsp;' +
-    //                        providers.join(', ') +
-    //                        '.&nbsp;All&nbsp;seasonalities.<br>' +
-    //                 '   </div> ' +
-    //                 '   <div class="mol-Map-ListQueryInfoWindow"> ' +
-    //                 '       <table class="listtable">' +
-    //                 '           <thead>' +
-    //                 '               <tr>' +
-    //                 '                   <th></th>' +
-    //                 '                   <th>Scientific Name</th>' +
-    //                 '                   <th>English Name</th>' +
-    //                 '                   <th>Order</th>' +
-    //                 '                   <th>Family</th>' +
-    //                 '                   <th>Rank&nbsp;&nbsp;&nbsp;</th>' +
-    //                 '                   <th>IUCN&nbsp;&nbsp;</th>' +
-    //                 '               </tr>' +
-    //                 '           </thead>' +
-    //                 '           <tbody class="tablebody">' +
-    //                                 tablerows.join('') +
-    //                 '           </tbody>' +
-    //                 '       </table>' +
-    //                 '   </div>' +
-    //                 '</div>');
+            if(imgtitle.search(req) != -1 ||
+               imgtitle.search(reqs) != -1) {
+              wikiimg = imgtitle;
+              break;
+            }
+          }
+        }
 
-    //     dlContent = $('' +
-    //                   '<div class="mol-Map-ListQuery">' +
-    //                   '   <div>' +
-    //                   '       <a href="' + 
-    //                               this.url.format(sqlurl) + '&format=csv"' +
-    //                   '           class="mol-Map-ListQueryDownload">' +
-    //                   '               download csv</a>' +
-    //                   '   </div> ' +
-    //                   '</div>');
+        if(eolimg != "null") {
+          $('<a href="http://eol.org/pages/' +
+            eolpage +
+            '" target="_blank"><img src="' +
+            eolimg +
+            '" style="float:left; margin:0 4px 0 0;"/>' +
+            '</a>').prependTo($(row).next().find('td'));
+          $(row).next().find('td div:last').append('' +
+            '... (Text Source:' +
+            '<a href="http://en.wikipedia.com/wiki/' +
+            qs.replace(/ /g, '_') +
+            '" target="_blank">Wikipedia</a>;' +
+            ' Image Source:<a href="http://eol.org/pages/' +
+            eolpage +
+            '" target="_blank">EOL</a>)' +
+            '<p><button class="mapButton" value="' +
+            qs + '">Map</button></p>');
+        } else if(wikiimg != null) {
+          //get a wikipedia image if we have to
+          $.getJSON(
+              'http://en.wikipedia.org/w/api.php?' +
+              'action=query' +
+              '&prop=imageinfo' +
+              '&format=json' +
+              '&iiprop=url' +
+              '&iilimit=10' +
+              '&iiurlwidth=91' +
+              '&iiurlheight=68' +
+              '&titles={0}'.format(wikiimg) +
+              '&callback=?'
+          ).success(
+            function(data) {
+              self.wikiImgCallback(data, qs, wikiimg)
+            }
+          );
+        }
 
-    //     iucnContent = $('' +
-    //                     '<div class="mol-Map-ListQuery mol-Map-ListQueryInfo">' +
-    //                     '    <div id="iucnChartDiv"></div>'+
-    //                     '    <div class="iucn_stats">' + stats + '</div>' +
-    //                     '</div>');
-    //   } else {
-    //     content = $(''+
-    //         '<div class="mol-Map-ListQueryEmptyInfoWindow">' +
-    //         '   <b>No ' + className.replace(/All/g, '') +
-    //                 ' species found within ' +
-    //                 listradius.radius/1000 + ' km of ' +
-    //                 Math.abs(
-    //                     Math.round(
-    //                         listradius.center.lat()*1000)/1000) +
-    //                         '&deg;&nbsp;' + latHem + '&nbsp;' +
-    //                 Math.abs(
-    //                     Math.round(
-    //                         listradius.center.lng()*1000)/1000) +
-    //                         '&deg;&nbsp;' + lngHem +
-    //         '   </b>' +
-    //         '</div>');
+        //check for link to eol, if true, add button
+        if(eolpage != "null") {
+          $(row).next().find('td p:last').append('' +
+          '<button class="eolButton" ' +
+          'value="http://eol.org/pages/' +
+          eolpage + '">Encyclopedia of Life</button>');
 
-    //     dlContent = $('' +
-    //         '<div class="mol-Map-ListQueryEmptyInfoWindow">' +
-    //         '    <b>No list to download.</b>' +
-    //         '</div>');
+          $('button.eolButton[value="http://eol.org/pages/' +
+            eolpage + '"]').click(function(event) {
+            var win = window.open($.trim(event.target.value));
+            win.focus();
+          });
+        }
 
-    //     iucnContent = $('' +
-    //         '<div class="mol-Map-ListQueryEmptyInfoWindow">' +
-    //         '    <b>No species found.</b>' +
-    //         '</div>');
-    //   }
+        $(row).find('td.arrowBox').html("<div class='arrow up'></div>");
+      }
 
-    //   return {
-    //     speciestotal: speciestotal,
-    //     content: content,
-    //     dlContent: dlContent,
-    //     iucnContent: iucnContent
-    //   }
-    // },
+
+      $("button.mapButton").click(
+        function(event) {
+          self.bus.fireEvent(
+            new mol.bus.Event(
+              'search',
+              {term : $.trim(event.target.value)}
+            )
+          );
+        }
+      );
+    },
+
+    /*
+     *  Callback for Wikipedia image json-p request.
+     */
+    wikiImgCallback: function(data, qs, wikiimg) {
+      var imgurl,
+          x,
+          z;
+
+      for(x in data.query.pages) {
+        z = data.query.pages[x];
+        imgurl = z.imageinfo[0].thumburl;
+
+        $('<a href="http://en.wikipedia.com/wiki/' +
+          qs.replace(/ /g, '_') +
+          '" target="_blank"><img src="' +
+          imgurl +
+          '" style="float:left; margin:0 4px 0 0;"/>')
+         .prependTo($(row).next().find('td'));
+        $(row).next().find('td div:last')
+          .append('' +
+          '... (Text Source:' +
+          '<a href="http://en.wikipedia.com/wiki/' +
+          qs.replace(/ /g, '_') +
+          '" target="_blank">Wikipedia</a>;' +
+          ' Image Source:' +
+          '<a href="http://en.wikipedia.com/wiki/' +
+          wikiimg +
+          '" target="_blank">Wikipedia</a>)' +
+          '<p><button class="mapButton" value="' +
+          qs +
+          '">Map</button></p>');
+      }
+    },
+
+    /*
+     *  Put html in saying information unavailable...
+     */
+    wikiError: function(row) {
+      $(row).find('td.arrowBox').html("<div class='arrow up'></div>");
+      $(row).next().find('td').html('<p>Description unavailable.</p>');
+    },
+
+    /*
+     * Function to call Wikipedia and EOL image
+     */
+    callWiki: function(row) {
+      var q,
+          qs,
+          eolimg,
+          eolpage,
+          self = this;
+
+      $(row).find('td.arrowBox').html('' +
+        '<img src="/img/loading-small.gif" width="' +
+        $(row).find('td.arrowBox').height() +'" height="' +
+        $(row).find('td.arrowBox').width() + '" />');
+
+      q = $(row).find('td.english').html();
+      qs = $(row).find('td.sci').html();
+      eolimg = $(row).find('td.sci').attr('value');
+      eolpage = $(row).find('td.english').attr('eol-page');
+
+      $.getJSON(
+          "http://en.wikipedia.org/w/api.php?" +
+          "action=query" +
+          "&format=json" +
+          "&callback=test" +
+          "&prop=extracts|images" +
+          "&imlimit=10" +
+          "&exlimit=1" +
+          "&redirects=" +
+          "exintro=" +
+          "&iwurl=" +
+          "&titles=" + qs +
+          "&exchars=275" +
+          '&callback=?'
+      ).success (
+        function(data) {
+          self.wikiCallback(data, row,q,qs,eolimg,eolpage)
+        }
+      ).error(
+        function(data) {
+          self.wikiError(row);
+        }
+      );
+    },
 
   });
 });
