@@ -28,7 +28,9 @@ define([
       this.model = new Model(params);
       this.collection = new Collection();
       this.RowView = RowView;
+      this.features = {};
       mps.subscribe('species-list-query-results', _.bind(this.receive, this));
+      mps.subscribe('clear-existing-species-list', _.bind(this.clearList, this));
       Views.ListView.prototype.initialize.call(this, params, parent);
     },
 
@@ -41,8 +43,19 @@ define([
           english;
           
       Views.ListView.prototype.render.call(this);
+      
+      _.each(
+        this.features,
+        function(feature) {
+          if(feature.listWindow) {
+              feature.listWindow.dialog("close");
+          }
+        }
+      );
+      
       latHem = (results.listRadius.center.lat() > 0) ? 'N' : 'S';
       lngHem = (results.listRadius.center.lng() > 0) ? 'E' : 'W';
+      
       this.$el.dialog({
         autoOpen: true,
         width: 680,
@@ -122,134 +135,140 @@ define([
       listTabs.tabs("select", 0);
       
       //iucn pie chart
-      $("#iucnChartDiv").height(mmlHeight-140);
-
-      iucnlist = this.getRedListCounts(results.response.rows);
-      iucndata = google.visualization.arrayToDataTable(iucnlist);
-
-      options = {
-        width: 605,
-        height: $("#iucnChartDiv").height(),
-        backgroundColor: 'transparent',
-        title: 'Species by IUCN Status',
-        colors: ['#006666',
-                 '#88c193',
-                 '#cc9900',
-                 '#cc6633',
-                 '#cc3333',
-                 '#FFFFFF',
-                 '#000000'],
-        pieSliceText: 'none',
-        chartArea: {left:125, top:25, width:"100%", height:"85%"}
-      };
-
-      chart = new google.visualization.PieChart(
-        document.getElementById('iucnChartDiv'));
-      chart.draw(iucndata, options);
-      
-      /*
-       * Just putting this in here for now
-       * will migrate it to a RowView when and if possible.
-       */
+      if(results.response.rows.length > 0) {
+        $("#iucnChartDiv").height(mmlHeight-140);
+  
+        iucnlist = this.getRedListCounts(results.response.rows);
+        iucndata = google.visualization.arrayToDataTable(iucnlist);
+  
+        options = {
+          width: 605,
+          height: $("#iucnChartDiv").height(),
+          backgroundColor: 'transparent',
+          title: 'Species by IUCN Status',
+          colors: ['#006666',
+                   '#88c193',
+                   '#cc9900',
+                   '#cc6633',
+                   '#cc3333',
+                   '#FFFFFF',
+                   '#000000'],
+          pieSliceText: 'none',
+          chartArea: {left:125, top:25, width:"100%", height:"85%"}
+        };
+  
+        chart = new google.visualization.PieChart(
+          document.getElementById('iucnChartDiv'));
+        chart.draw(iucndata, options);
+      }
       
       //image gallery
-      _.each(
-        results.response.rows,
-        function(row) {
-          english = (row.english != null) ?
-            _.uniq(row.english.split(',')).join(',') : '';
-
-          if(row.thumbsrc != null) {
-            $("#gallery").append('' +
-              '<li><a class="eol_img" href="http://eol.org/pages/' +
-              row.eol_page_id +
-              '" target="_blank"><img src="' +
-              row.thumbsrc +
-              '" title="' +
-              english +
-              '" sci-name="' +
-              row.scientificname + '"/></a></li>');
-          } else {
-            $("#gallery").append('' +
-              '<li><div style="width:91px; height:68px"' +
-              'title="' + english +
-              '" sci-name="' + row.scientificname +
-              '">No image for ' +
-              english + '.</div></li>');
+      if(results.response.rows.length > 0) {
+        _.each(
+          results.response.rows,
+          function(row) {
+            english = (row.english != null) ?
+              _.uniq(row.english.split(',')).join(',') : '';
+  
+            if(row.thumbsrc != null) {
+              $("#gallery").append('' +
+                '<li><a class="eol_img" href="http://eol.org/pages/' +
+                row.eol_page_id +
+                '" target="_blank"><img src="' +
+                row.thumbsrc +
+                '" title="' +
+                english +
+                '" sci-name="' +
+                row.scientificname + '"/></a></li>');
+            } else {
+              $("#gallery").append('' +
+                '<li><div style="width:91px; height:68px"' +
+                'title="' + english +
+                '" sci-name="' + row.scientificname +
+                '">No image for ' +
+                english + '.</div></li>');
+            }
           }
-        }
-      );
-
-      $('#gallery').ppGallery({thumbWidth: 91, maxWidth: 635});                  
-
-      $('#gallery li a img').qtip({
-        content: {
-          text: function(api) {
-            return '<div>' + $(this).attr('oldtitle') +
-                '<br/><button class="mapButton" value="' +
-                $(this).attr('sci-name') +
-                '">Map</button>' +
-                '<button class="eolButton" value="' +
-                $(this).parent().attr('href') +
-                '">EOL</button></div>';
+        );
+  
+        $('#gallery').ppGallery({thumbWidth: 91, maxWidth: 635});                  
+  
+        $('#gallery li a img').qtip({
+          content: {
+            text: function(api) {
+              return '<div>' + $(this).attr('oldtitle') +
+                  '<br/><button class="mapButton" value="' +
+                  $(this).attr('sci-name') +
+                  '">Map</button>' +
+                  '<button class="eolButton" value="' +
+                  $(this).parent().attr('href') +
+                  '">EOL</button></div>';
+            }
+          },
+          hide: {
+            fixed: true,
+            delay: 500
+          },
+          events: {
+            visible: function(event, api) {
+              $("button.mapButton").click(
+                function(event) {
+                  var terms = {source: 'query', 
+                               term : $.trim(event.target.value)};
+                  mps.publish('search', [terms]);
+                }
+              );
+  
+              $('button.eolButton').click(
+                function(event) {
+                  var win = window.open(
+                      $.trim(event.target.value)
+                  );
+                  win.focus();
+                }
+              );
+            }
           }
-        },
-        hide: {
-          fixed: true,
-          delay: 500
-        },
-        events: {
-          visible: function(event, api) {
-            $("button.mapButton").click(
-              function(event) {
+        });
+  
+        $('#gallery li div').qtip({
+          content: {
+            text: function(api) {
+              return '<div>' + $(this).attr('title') +
+                  '<br/><button class="mapButton" value="' +
+                  $(this).attr('sci-name') +
+                  '">Map</button></div>';
+            }
+          },
+          hide: {
+            fixed: true,
+            delay: 500
+          },
+          events: {
+            visible: function(event, api) {
+              $("button.mapButton").click(function(event) {
                 var terms = {source: 'query', 
                              term : $.trim(event.target.value)};
                 mps.publish('search', [terms]);
-              }
-            );
-
-            $('button.eolButton').click(
-              function(event) {
-                var win = window.open(
-                    $.trim(event.target.value)
-                );
-                win.focus();
-              }
-            );
+              });
+            }
           }
-        }
-      });
-
-      $('#gallery li div').qtip({
-        content: {
-          text: function(api) {
-            return '<div>' + $(this).attr('title') +
-                '<br/><button class="mapButton" value="' +
-                $(this).attr('sci-name') +
-                '">Map</button></div>';
-          }
-        },
-        hide: {
-          fixed: true,
-          delay: 500
-        },
-        events: {
-          visible: function(event, api) {
-            $("button.mapButton").click(function(event) {
-              var terms = {source: 'query', 
-                           term : $.trim(event.target.value)};
-              mps.publish('search', [terms]);
-            });
-          }
-        }
-      });
+        });  
+      }
+      
       
       //end gallery
+      
+      this.features[results.listRadius.center.toString() + 
+                    results.listRadius.radius] = {listWindow:this.$el};
 
       this.$el.dialog({
          beforeClose: function(evt, ui) {
            listTabs.tabs("destroy");
            $(".mol-Map-ListDialogContent").remove();
+           mps.publish('clear-species-list-query-marker', {source: null});
+           delete self.features[results.listRadius.center.toString() + 
+                                results.listRadius.radius];
          }
       });
 
@@ -257,7 +276,7 @@ define([
     },
 
     events: {
-      'click .clearResults': 'clear'
+      
     },
     
     setup: function () {
@@ -286,10 +305,9 @@ define([
       this.render(results);
       this.$el.show();
     },
-
-    clear: function (e) {
-      this.$el.hide();
-      this.collection.reset();
+    
+    clearList: function (e) {
+      this.$el.dialog("close");
     },
 
     /*

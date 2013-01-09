@@ -125,8 +125,9 @@ define([
     },
 
     addEvents: function () {
+      var myMap = this.map;
       google.maps.event.addListener(this.map, 'click', function(event) {
-        mps.publish('species-list-query-click', [{gmaps_event : event}]);
+        mps.publish('species-list-query-click', [{map: myMap, gmaps_event : event}]);
       });
     },
 

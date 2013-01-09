@@ -33,12 +33,15 @@ define([
       this.on('rendered', this.setup, this);
       this.searching = {};
       this.queryRunning = 0;
+      this.listRadius;
       mps.subscribe('species-list-query-click', _.bind(this.execute, this));
+      mps.subscribe('clear-species-list-query-marker', _.bind(this.clearMarker, this));
+      //TODO
+      //add help tip via cookie at the beginning
     },
 
     /**
      * Render the view by adding it to the Control Display.
-     *
      */
     render: function () {
       this.setElement(this.make(this.tagName, this.attributes(),
@@ -49,7 +52,7 @@ define([
     },
 
     events: {
-      'click .toggle': 'toggle'
+      'click .toggleBtn': 'toggle'
     },
 
     /**
@@ -64,35 +67,45 @@ define([
      * click event was triggered from the map.
      */
     execute: function (params) {
-      var listRadius,
-          dataset_id = $("option:selected", this.$(".dataset_id"))
+      var dataset_id = $("option:selected", this.$(".dataset_id"))
                         .data( $('.selected',this.$(".types")).val() ),
           className = $("option:selected", this.$(".dataset_id")).text();
+            
       
-      listRadius = new google.maps.Circle(
-        {
-          map: params.map,
-          radius: parseInt(this.$('.radius').val())*1000,
-          center: params.gmaps_event.latLng,
-          strokeWeight: 3,
-          strokeColor: 'darkred',
-          clickable: false,
-          fillOpacity: 0
-        }
-      );
-      
-      this.getList(params.gmaps_event.latLng.lat(),
-                   params.gmaps_event.latLng.lng(),
-                   listRadius,
-                   dataset_id,
-                   className);
-                   
-      //ALSO TODO based on this event
-      //destroy help tip
-      //make sure module is enabled and on
-      //fire show-loading-indicator event
-      //close existing list windows
+      if (!this.$el.hasClass('off')) {
+        
+        mps.publish('clear-existing-species-list', {source: 'query'});
+        
+        listRadius = new google.maps.Circle(
+          {
+            map: params.map,
+            radius: parseInt(this.$('.radius').val())*1000,
+            center: params.gmaps_event.latLng,
+            strokeWeight: 3,
+            strokeColor: 'darkred',
+            clickable: false,
+            fillOpacity: 0
+          }
+        );
+        
+        mps.publish('show-loading-indicator', {source : 'listradius'});
+        
+        
+        this.getList(params.gmaps_event.latLng.lat(),
+                     params.gmaps_event.latLng.lng(),
+                     listRadius,
+                     dataset_id,
+                     className);
+      }
                                     
+      return this;
+    },
+    
+    clearMarker: function(params) {
+      if(listRadius) {
+        listRadius.setMap(null);
+      }
+      
       return this;
     },
     
@@ -107,9 +120,6 @@ define([
         id, Math.round(lng*100)/100, Math.round(lat*100)/100, rad.radius, cl);
       csv_sql = CartoDB.sql.speciesQueryCsv.format(
         id, Math.round(lng*100)/100, Math.round(lat*100)/100, rad.radius, cl);
-                
-      //ALSO TODO to make request
-      //toggle running query indicator
       
       if(self.queryRunning > 0) {
         alert('Please wait for your last species list querying to complete' + 
@@ -138,9 +148,13 @@ define([
         };
 
         self.queryRunning--;
+        
+        if(!response.error) {
+          mps.publish('species-list-query-results', [results]);
+        } else {
+          listRadius.setMap(null);
+        }
 
-        //Publish the results for the species list modal view.
-        mps.publish('species-list-query-results', [results]);
         mps.publish('hide-loading-indicator', {source: 'query'});
       };
     },
@@ -149,10 +163,22 @@ define([
      * Toggle view style.
      */
     toggle: function (e) {
-      if (this.$el.hasClass('off'))
+      if(self.listRadius) {
+        self.listRadius.setMap(null);
+      }  
+        
+      if(this.$el.hasClass('off')) {
         this.$el.removeClass('off');
-      else
+        $('.speciesDisplay').show();
+        $('#speciesListButton').addClass('selected');
+        $('#speciesListButton').html("ON");
+      } else {
         this.$el.addClass('off');
+        $('.speciesDisplay').hide();
+        $('#speciesListButton').removeClass('selected');
+        $('#speciesListButton').html("OFF");
+        mps.publish('clear-existing-species-list', {source: 'query'});
+      }
     },
 
   });
