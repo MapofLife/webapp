@@ -70,7 +70,10 @@
 </div>
 <div id="imagesTab" class="ui-tabs-panel">
   <div>
-    <span id="imgTotals"></span>
+    <span id="imgTotals">
+      Images are available for <%= this.collection.numImgs %> 
+      of <%= this.collection.speciestotal %> species.
+    </span>
     Source: <a href="http://eol.org/" target="_blank">Encyclopedia of Life</a>
   </div>
   <ul id="gallery" style="overflow: auto;"></ul>

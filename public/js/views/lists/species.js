@@ -5,13 +5,15 @@
 define([
   'jQuery',
   'Underscore',
+  'Qtip',
+  'ppGallery',
   'mps',
   'views/boiler',
   'models/widget',
   'text!/templates/lists/species.html',
   'collections/species',
   'views/rows/species'
-], function ($, _, mps, Views, Model, template, Collection, RowView) {
+], function ($, _, qtip, ppGallery, mps, Views, Model, template, Collection, RowView) {
   return Views.ListView.extend({
 
     attributes: function () {
@@ -35,7 +37,8 @@ define([
           iucnlist,
           iucndata,
           options,
-          chart;
+          chart,
+          english;
           
       Views.ListView.prototype.render.call(this);
       latHem = (results.listRadius.center.lat() > 0) ? 'N' : 'S';
@@ -64,8 +67,6 @@ define([
             .height($(".mol-Map-ListDialog").height()-125);
       });
       
-
-
       //initialize tabs and set height
       listTabs = $("#tabs").tabs();
 
@@ -145,6 +146,105 @@ define([
       chart = new google.visualization.PieChart(
         document.getElementById('iucnChartDiv'));
       chart.draw(iucndata, options);
+      
+      /*
+       * Just putting this in here for now
+       * will migrate it to a RowView when and if possible.
+       */
+      
+      //image gallery
+      _.each(
+        results.response.rows,
+        function(row) {
+          english = (row.english != null) ?
+            _.uniq(row.english.split(',')).join(',') : '';
+
+          if(row.thumbsrc != null) {
+            $("#gallery").append('' +
+              '<li><a class="eol_img" href="http://eol.org/pages/' +
+              row.eol_page_id +
+              '" target="_blank"><img src="' +
+              row.thumbsrc +
+              '" title="' +
+              english +
+              '" sci-name="' +
+              row.scientificname + '"/></a></li>');
+          } else {
+            $("#gallery").append('' +
+              '<li><div style="width:91px; height:68px"' +
+              'title="' + english +
+              '" sci-name="' + row.scientificname +
+              '">No image for ' +
+              english + '.</div></li>');
+          }
+        }
+      );
+
+      $('#gallery').ppGallery({thumbWidth: 91, maxWidth: 635});                  
+
+      $('#gallery li a img').qtip({
+        content: {
+          text: function(api) {
+            return '<div>' + $(this).attr('oldtitle') +
+                '<br/><button class="mapButton" value="' +
+                $(this).attr('sci-name') +
+                '">Map</button>' +
+                '<button class="eolButton" value="' +
+                $(this).parent().attr('href') +
+                '">EOL</button></div>';
+          }
+        },
+        hide: {
+          fixed: true,
+          delay: 500
+        },
+        events: {
+          visible: function(event, api) {
+            $("button.mapButton").click(
+              function(event) {
+                var terms = {source: 'query', 
+                             term : $.trim(event.target.value)};
+                mps.publish('search', [terms]);
+              }
+            );
+
+            $('button.eolButton').click(
+              function(event) {
+                var win = window.open(
+                    $.trim(event.target.value)
+                );
+                win.focus();
+              }
+            );
+          }
+        }
+      });
+
+      $('#gallery li div').qtip({
+        content: {
+          text: function(api) {
+            return '<div>' + $(this).attr('title') +
+                '<br/><button class="mapButton" value="' +
+                $(this).attr('sci-name') +
+                '">Map</button></div>';
+          }
+        },
+        hide: {
+          fixed: true,
+          delay: 500
+        },
+        events: {
+          visible: function(event, api) {
+            $("button.mapButton").click(function(event) {
+              var terms = {source: 'query', 
+                           term : $.trim(event.target.value)};
+              mps.publish('search', [terms]);
+            });
+          }
+        }
+      });
+      
+      //end gallery
 
       this.$el.dialog({
          beforeClose: function(evt, ui) {
@@ -180,7 +280,7 @@ define([
       this.model.set('sqlurl', CartoDB.url.query
                                 .format(
                                   encodeURIComponent(results.sql)) +
-                                '&format=csv');
+                                '&format=csv');                         
       this.collection.reset(results.response.rows);
       this.collection.process();
       this.render(results);
@@ -305,12 +405,9 @@ define([
 
       $("button.mapButton").click(
         function(event) {
-          self.bus.fireEvent(
-            new mol.bus.Event(
-              'search',
-              {term : $.trim(event.target.value)}
-            )
-          );
+          var terms = {source: 'query', 
+                       term : $.trim(event.target.value)};
+          mps.publish('search', [terms]);
         }
       );
     },

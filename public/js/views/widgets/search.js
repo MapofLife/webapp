@@ -32,6 +32,7 @@ define([
       this.model = new Model(params);
       this.on('rendered', this.setup, this);
       this.searching = {};
+      mps.subscribe('search', _.bind(this.checkSearch, this));
     },
 
     /**
@@ -166,6 +167,22 @@ define([
       var input = this.$('input');
       this.search(input.val());
       return this;
+    },
+    
+    checkSearch: function (terms) {
+      var input = this.$('input');
+      
+      if (terms.term != undefined) {       
+        if(this.$el.hasClass('off')) {
+          this.$el.removeClass('off');
+        }
+  
+        this.search(terms.term);
+  
+        if (input.val() == '') {
+          input.val(terms.term);
+        }
+      }
     },
 
     /**

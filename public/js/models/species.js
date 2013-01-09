@@ -42,9 +42,14 @@ define([
                   params.provider,
                   params.provider_title)
       );
+      
       if (this.get('year') != null && this.get('year') != '')
         this.collection.years.push(this.get('year'));
+      
       this.collection.scientificnames[params.scientificname] = this.get('redlist');
+      
+      if(params.thumbsrc != null && params.thumbsrc != '')
+        this.collection.numImgs++;
     },
 
   });

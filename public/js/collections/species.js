@@ -19,6 +19,7 @@ define([
       this.speciestotal = 0;
       this.speciesthreatened = 0;
       this.speciesdd = 0;
+      this.numImgs = 0;
     },
 
     process: function () {
@@ -44,8 +45,6 @@ define([
           ('(' + this.speciesthreatened + ' considered threatened by ' +
           '<a href="http://www.iucnredlist.org" ' +
           'target="_iucn">IUCN</a> '+this.years.join(',')+')') : '';
-
-      // console.log(this.speciestotal);
     },
 
     model: Model

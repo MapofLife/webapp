@@ -8,6 +8,8 @@ require.config({
     jQuery: 'libs/jquery/jquery',
     Underscore: 'libs/underscore/underscore',
     Backbone: 'libs/backbone/backbone',
+    ppGallery: 'libs/ppgallery/ppgallery',
+    Qtip: 'libs/qtip/qtip',
     mps: 'libs/minpubsub/minpubsub'
   },
   // load in the correct order (still asynch)
