@@ -1,5 +1,5 @@
 /*
- * Search Result view
+ * Species List Result view
  */
 
 define([
@@ -7,17 +7,15 @@ define([
   'jQuery',
   'Underscore',
   'views/boiler',
-  'text!/templates/rows/result.html'
+  'text!/templates/rows/species.html'
 ], function ($, _, Views, template) {
   return Views.RowView.extend({
 
+    tagName: 'tr',
+
     attributes: function () {
       return _.extend({
-        class: this.model ? 'resultContainer'
-            + ' name-' + this.model.get('name').replace(/ /g, '_') 
-            + ' source_type-' + this.model.get('source_type')
-            + ' type-' + this.model.get('type')
-            : '',
+        class: this.model ? this.model.get('tclass') : '',
         id: this.model.id
       }, Views.ListView.prototype.attributes.call(this));
     },

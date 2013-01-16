@@ -5,11 +5,11 @@
 define([
   'jQuery',
   'Underscore',
+  'mps',
   'Backbone',
   'models/widget',
-  'text!/templates/widgets/search.html',
-  'mps'
-], function ($, _, Backbone, Model, template, mps) {
+  'text!/templates/widgets/search.html'
+], function ($, _, mps, Backbone, Model, template) {
   return Backbone.View.extend({
 
     tagName: 'div',
@@ -32,6 +32,7 @@ define([
       this.model = new Model(params);
       this.on('rendered', this.setup, this);
       this.searching = {};
+      mps.subscribe('search', _.bind(this.checkSearch, this));
     },
 
     /**
@@ -167,6 +168,22 @@ define([
       this.search(input.val());
       return this;
     },
+    
+    checkSearch: function (terms) {
+      var input = this.$('input');
+      
+      if (terms.term != undefined) {       
+        if(this.$el.hasClass('off')) {
+          this.$el.removeClass('off');
+        }
+  
+        this.search(terms.term);
+  
+        if (input.val() == '') {
+          input.val(terms.term);
+        }
+      }
+    },
 
     /**
      * Search CartoDB on the supplied term.
@@ -206,6 +223,9 @@ define([
       };
     },
 
+    /**
+     * Toggle view style.
+     */
     toggle: function (e) {
       if (this.$el.hasClass('off'))
         this.$el.removeClass('off');

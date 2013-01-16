@@ -2,7 +2,8 @@
 
 define([
   'views/widgets/search',
-  'views/lists/results'
+  'views/lists/results',
+  'views/widgets/query'
   ], function () {
 
   Position = {
@@ -16,6 +17,7 @@ define([
   return {
     Search: arguments[0],
     Results: arguments[1],
+    Query: arguments[2],
 
     Position: Position
   };

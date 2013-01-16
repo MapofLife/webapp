@@ -6,10 +6,11 @@ define([
   // dependencies
   'jQuery',
   'Underscore',
+  'mps',
   'Backbone',
   'text!/templates/map.html',
   'views/control_display'
-], function ($, _, Backbone, template, ControlDisplay) {
+], function ($, _, mps, Backbone, template, ControlDisplay) {
   return Backbone.View.extend({
 
     el: '#map',
@@ -99,6 +100,7 @@ define([
         if (!window.google || !window.google.maps) return this;
         this.map = new google.maps.Map($('#canvas', this.el).get(0), this.options);
         this.addDisplays();
+        this.addEvents();
       }
       return this;
     },
@@ -112,6 +114,21 @@ define([
         ],
         position: { x: 'left', y: 'top' }
       }, this).render());
+      // top-right widgets
+      this.displays.push(new ControlDisplay({
+        widgets: [
+          { name: 'Query', position: { y: 'top' }}
+        ],
+        position: { x: 'right', y: 'top' }
+      }, this).render());
+
+    },
+
+    addEvents: function () {
+      var myMap = this.map;
+      google.maps.event.addListener(this.map, 'click', function(event) {
+        mps.publish('species-list-query-click', [{map: myMap, gmaps_event : event}]);
+      });
     },
 
     getDisplay: function(position) {

@@ -1,0 +1,108 @@
+<ul class="ui-tabs-nav">
+  <li><a href="#listTab">List</a></li>
+  <li><a href="#imagesTab">Images</a></li>
+  <li><a href="#iucnTab">IUCN</a></li>
+  <li><a href="#dlTab">Download</a></li>
+</ul>
+<div id="listTab" class="ui-tabs-panel">
+  <div class="mol-Map-ListQueryInfo">
+    <!-- <div class="clearfix"></div> -->
+    <div class="mol-Map-ListQuery">
+      Data type/source:&nbsp;
+      <a class="type range">Expert range map</a>,
+      <a class="provider jetz">Jetz et al., 2012</a>.&nbsp;All&nbsp;seasonalities.<br />
+    </div>
+    <!-- <div class="clearfix"></div> -->
+    <div class="mol-Map-ListQueryInfoWindow">
+      <table class="listtable tablesorter tablesorter-default">
+        <thead>
+          <tr class="tablesorter-headerRow">
+            <th data-column="0" class="tablesorter-header">
+              <div class="tablesorter-header-inner">
+                <i class="tablesorter-icon"></i>
+              </div>
+            </th>
+            <th data-column="1" class="tablesorter-header">
+              <div class="tablesorter-header-inner">
+                Scientific Name<i class="tablesorter-icon"></i>
+              </div>
+            </th>
+            <th data-column="2" class="tablesorter-header">
+              <div class="tablesorter-header-inner">
+                English Name
+                <i class="tablesorter-icon"></i>
+              </div>
+            </th>
+            <th data-column="3" class="tablesorter-header">
+              <div class="tablesorter-header-inner">
+                Order
+                <i class="tablesorter-icon"></i>
+              </div>
+            </th>
+            <th data-column="4" class="tablesorter-header">
+              <div class="tablesorter-header-inner">
+                Family
+                <i class="tablesorter-icon"></i>
+              </div>
+            </th>
+            <th data-column="5" class="tablesorter-header tablesorter-headerSortDown">
+              <div class="tablesorter-header-inner">
+                Rank&nbsp;&nbsp;&nbsp;
+                <i class="tablesorter-icon"></i>
+              </div>
+            </th>
+            <th data-column="6" class="tablesorter-header">
+              <div class="tablesorter-header-inner">
+                IUCN&nbsp;&nbsp;
+                <i class="tablesorter-icon"></i>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="tablebody">
+          <% _.each(this.collection.models, _.bind(function (row) { %>
+            <%= this.row(row) %>
+          <% }, this)); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div id="imagesTab" class="ui-tabs-panel">
+  <div>
+    <span id="imgTotals">
+      Images are available for <%= this.collection.numImgs %> 
+      of <%= this.collection.speciestotal %> species.
+    </span>
+    Source: <a href="http://eol.org/" target="_blank">Encyclopedia of Life</a>
+  </div>
+  <ul id="gallery" style="overflow: auto;"></ul>
+</div>
+<div id="iucnTab" class="ui-tabs-panel">
+  <% if (this.model.get('total_rows') > 0) { %>
+    <div class="mol-Map-ListQuery mol-Map-ListQueryInfo">
+      <div id="iucnChartDiv"></div>
+      <div class="iucn_stats">
+        <%= this.collection.stats %>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="mol-Map-ListQueryEmptyInfoWindow">
+      <b>No species found.</b>
+    </div>
+  <% } %>
+</div>
+<div id="dlTab" class="ui-tabs-panel">
+  <% if (this.model.get('total_rows') > 0) { %>
+    <div class="mol-Map-ListQuery">
+      <div>
+        <a href= <%= this.model.get('sqlurl') %> 
+           class="mol-Map-ListQueryDownload">Download CSV</a>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="mol-Map-ListQueryEmptyInfoWindow">
+      <b>No list to download.</b>
+    </div>
+  <% } %>
+</div>

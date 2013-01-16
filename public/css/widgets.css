@@ -1142,6 +1142,7 @@ div.mol-Dashboard-TableWindow {
     height: 22px;
     color: #fff;
     padding: 3px;
+    float: left;
 }
 
 .mol-Map-QueryDisplay button img{
@@ -1180,10 +1181,8 @@ div.mol-Dashboard-TableWindow {
 
 .mol-Map-QueryDisplay div.speciesDisplay {
     float: left;
-    _float: none;
     font-size: 0.7em;
-    margin-right: 2px;
-    -moz-user-select: none;
+    margin: 3px 2px 0 4px;
 }
 
 .mol-Map-QueryDisplay div.speciesDisplay select {

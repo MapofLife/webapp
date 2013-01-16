@@ -5,13 +5,13 @@
 define([
   'jQuery',
   'Underscore',
+  'mps',
   'views/boiler',
   'models/widget',
   'text!/templates/lists/results.html',
   'collections/results',
-  'views/rows/result',
-  'mps'
-], function ($, _, Views, Model, template, Collection, RowView, mps) {
+  'views/rows/result'
+], function ($, _, mps, Views, Model, template, Collection, RowView) {
   return Views.ListView.extend({
 
     attributes: function () {

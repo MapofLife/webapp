@@ -17,6 +17,17 @@ define([
       return 'layer--{0}--{1}--{2}--{3}'.format(name, type, source, data_table);
     },
 
+    makeId: function (len) {
+      if (!len) len = 5;
+      var txt = '';
+      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                     + 'abcdefghijklmnopqrstuvwxyz0123456789';
+      for (var i = 0; i < len; ++i)
+        txt += possible.charAt(Math.floor(
+              Math.random() * possible.length));
+      return txt;
+    },
+
   }
 
 });
