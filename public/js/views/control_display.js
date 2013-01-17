@@ -24,8 +24,10 @@ define([
     initialize: function (params, parent) {
       this.map = parent;
       this.template = _.template(template);
-      params.name = _.capitalize(params.position.y)
-                  + _.capitalize(params.position.x) + 'Control';
+
+      params.name = _.capitalize(params.position[0]) +
+                    _.capitalize(params.position[1]) + 'Control';            
+      
       this.model = new Model(params);
       this.on('rendered', this.setup, this);
     },
@@ -33,7 +35,7 @@ define([
     render: function () {
       this.setElement(this.make(this.tagName, this.attributes(), this.template()));
       var pos = this.model.get('position');
-      var str = (pos.y + '_' + pos.x).toUpperCase();
+      var str = (pos[0] + '_' + pos[1]).toUpperCase(); 
       this.map.map.controls[google.maps.ControlPosition[str]].clear();
       this.map.map.controls[google.maps.ControlPosition[str]].push(this.el);
       _.each(this.model.get('widgets'), _.bind(function (widget) {

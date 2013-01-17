@@ -112,14 +112,21 @@ define([
           { name: 'Search', position: { y: 'top' }},
           { name: 'Results', position: { y: 'bottom' }}
         ],
-        position: { x: 'left', y: 'top' }
+        position: ['top','left']
       }, this).render());
       // top-right widgets
       this.displays.push(new ControlDisplay({
         widgets: [
           { name: 'Query', position: { y: 'top' }}
         ],
-        position: { x: 'right', y: 'top' }
+        position: ['top','right']
+      }, this).render());
+      // bottom-right widgets
+      this.displays.push(new ControlDisplay({
+        widgets: [
+          { name: 'Menu', position: { y: 'bottom' }}
+        ],
+        position: ['right','bottom']
       }, this).render());
 
     },

@@ -1,6 +1,14 @@
-body, html, .wrap, .content, #map, #canvas {
+body, html, .wrap, .content, #canvas {
   width: 100%;
   height: 100%;
+}
+
+#map {
+    position: absolute;
+    left: 0px;
+    top: 40px;
+    right: 0px;
+    bottom: 0px;
 }
 
 .clearfix:before,.clearfix:after{content:"";display:table;} 
@@ -71,14 +79,19 @@ a.header-button:focus {
 /*HEADER*/
 
 #header {
-  height: 40px;
-  padding: 10px 20px 0 20px;
-  background: #f2f2f2;
-  border-bottom: 1px solid #cccccc;
-
-  -webkit-box-shadow: 0 0 1px #808080;
-  -moz-box-shadow: 0 0 1px #808080;
-  box-shadow: 0 0 1px #808080;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    height: 28px;
+    
+    padding: 10px 20px 0 20px;
+    background: #f2f2f2;
+    border-bottom: 1px solid #cccccc;
+    
+    -webkit-box-shadow: 0 0 1px #808080;
+    -moz-box-shadow: 0 0 1px #808080;
+    box-shadow: 0 0 1px #808080;
 }
 
 #logo {
