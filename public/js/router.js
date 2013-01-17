@@ -12,7 +12,8 @@ define([
   'views/login',
   'views/header',
   'views/map',
-  'views/lists/species'
+  'views/lists/species',
+  'views/lists/dashboard',
 ], function ($, _, mapping, Backbone, Bus, Login, Header, Map, SpeciesListModal) {
   var AppRouter = Backbone.Router.extend({
     
@@ -81,7 +82,9 @@ define([
           speciesQuery: "SELECT * FROM " + 
                         "get_species_list('{0}',{1},{2},{3},'{4}')",
           speciesQueryCsv: "SELECT * FROM " +
-                           "get_species_list_csv('{0}',{1},{2},{3},'{4}')"
+                           "get_species_list_csv('{0}',{1},{2},{3},'{4}')",
+          dashboardSql: 'SELECT DISTINCT * FROM dash_cache ' +
+                        'ORDER BY dataset_title asc'
         };
         CartoDB.url = {
           sql: 'http://d3dvrpov25vfw0.cloudfront.net/api/v2/sql?callback=?&q={0}',
