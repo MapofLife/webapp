@@ -175,7 +175,7 @@ button:hover{
     display: inline-block;
     text-align: center;
     padding: 5px;
-    margin: 0px;
+    margin: -2px;
 }
 
 .mol-BottomRightMenu .button:hover {
