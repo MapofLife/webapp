@@ -117,8 +117,7 @@ define([
       // top-right widgets
       this.displays.push(new ControlDisplay({
         widgets: [
-          { name: 'Query', position: { y: 'top' }},
-          { name: 'Dashboard', position: { y: 'bottom' }}          
+          { name: 'Query', position: { y: 'top' }}         
         ],
         position: ['top','right']
       }, this).render());

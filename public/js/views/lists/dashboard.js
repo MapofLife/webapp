@@ -28,13 +28,34 @@ define([
       this.model = new Model(params);
       this.collection = new Collection();
       this.RowView = RowView;
-      //this.initDialog();
+      this.isLoaded = false;
       mps.subscribe('taxonomy-dashboard-toggle', _.bind(this.toggle, this));
+      mps.subscribe('dashboard-results', _.bind(this.receive, this));
       Views.ListView.prototype.initialize.call(this, params, parent);
     },
 
-    render: function (results) {   
+    render: function (results) {
+      console.log("dashboard render");  
+        
       Views.ListView.prototype.render.call(this);
+      
+      this.$el.dialog({
+        autoOpen: false,
+        width: 946,
+        height: 600,
+        minHeight: 300,
+        stack: true,
+        dialogClass: "mol-Dashboard",
+        title: 'Dashboard - ' +
+            'Statistics for Data Served by the Map of Life',
+        open: function(event, ui) {
+          //$(".mol-Dashboard-TableWindow").height($(".mol-Dashboard").height()-95);
+
+          //need this to force zebra on the table
+          //this.$el.dashtable.trigger("update", true);
+        }
+      });
+      
       return this;
     },
 
@@ -56,35 +77,13 @@ define([
             CartoDB.url.sql.format(CartoDB.sql.dashboardSql),
             function(response) {
                 console.log('dashboard response');
-                console.log(dashboard);
+                console.log(response);
                 
-                
+                mps.publish('dashboard-results', response);
                 /*
                 self.display = new mol.map.dashboard.DashboardDisplay(
                     response.rows, self.summary
                 );
-                self.display.dialog(
-                    {
-                        autoOpen: false,
-                        width: 946,
-                        height: 600,
-                        minHeight: 300,
-                        stack: true,
-                        dialogClass: "mol-Dashboard",
-                        title: 'Dashboard - ' +
-                        'Statistics for Data Served by the Map of Life',
-                        open: function(event, ui) {
-                             $(".mol-Dashboard-TableWindow")
-                                .height(
-                                    $(".mol-Dashboard").height()-95);
-
-                             //need this to force zebra on the table
-                             self.display.dashtable
-                                .trigger("update", true);
-                        }
-                    }
-                );
-
                 $(".mol-Dashboard").parent().bind("resize", function() {
                     $(".mol-Dashboard-TableWindow")
                         .height($(".mol-Dashboard").height()-95);
@@ -109,7 +108,17 @@ define([
     },
     
     toggle: function() {
-        console.log("toggle")
+        if(this.$el.dialog('isOpen')) {
+            this.$el.dialog("close");
+        } else {
+            if(this.isLoaded) {
+                this.$el.dialog("open");
+            } else {
+                this.isLoaded = true;
+                this.initDialog();
+                this.$el.dialog("open");
+            }
+        }
     },
 
     row: function (model) {
@@ -121,10 +130,21 @@ define([
           + '"></td></tr>';
     },
 
-    
     receive: function (results) {
-                      
-      this.collection.reset();
+      console.log("dashboard receive");
+      
+      /*  
+      this.model.set('term', results.term);
+      this.model.set('time', results.response.time);
+      this.model.set('total_rows', results.response.total_rows);
+      this.model.set('sqlurl', CartoDB.url.query
+                                .format(
+                                  encodeURIComponent(results.sql)) +
+                                '&format=csv');                         
+      this.collection.reset(results.response.rows);
+      */
+            
+      this.collection.reset(results);
       this.collection.process();
       this.render(results);
     }
